@@ -1,0 +1,3912 @@
+From 853f9d31c5bdbdffc115930ba1790654de8dbd2f Mon Sep 17 00:00:00 2001
+From: unknown <PhILiPp@PhILiPp-PC.neora.com.pe>
+Date: Sun, 14 Oct 2018 10:44:10 -0500
+Subject: [PATCH 1/2] add username and password for DB
+XOV: XO_0_0_1
+
+---
+ src/main/resources/application.properties | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/resources/application.properties b/src/main/resources/application.properties
+index 2e14879..9b4c4e1 100644
+--- a/src/main/resources/application.properties
++++ b/src/main/resources/application.properties
+@@ -1,8 +1,8 @@
+ #PLEASE TRY NOT TO CHANGE SETTINGS AND USE APPROPRIATE ENV VARIABLES and DATABASE NAME AS CONFIGURED BELOW
+ #Database connection Parameters
+ spring.datasource.url: jdbc:mysql://localhost:3306/crossride?createDatabaseIfNotExist=true&useSSL=false
+-spring.datasource.username=root
+-spring.datasource.password=
++spring.datasource.username=tvsig
++spring.datasource.password=sineticos
+ spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+ 
+ spring.jpa.hibernate.ddl-auto=none
+-- 
+2.13.2.windows.1
+
+
+From 0741c892c472a693bd9c936660919372f09670ca Mon Sep 17 00:00:00 2001
+From: Philipp Pacheco <p.pacheco760@gmail.com>
+Date: Sun, 14 Oct 2018 17:56:05 -0500
+Subject: [PATCH 2/2] Cambios
+XOV: XO_0_0_1
+
+Modificaciones
+---
+ .gitignore                                         |    1 +
+ gradlew                                            |    0
+ private/cache/retriever/catalog.xml                |    6 +
+ .../xml/ns/dbchangelog/dbchangelog-3.4.xsd         | 1234 +++++++++++++++++++
+ .../xml/ns/dbchangelog/dbchangelog-3.5.xsd         | 1285 ++++++++++++++++++++
+ .../xml/ns/dbchangelog/dbchangelog-ext.xsd         |    7 +
+ .../techtrial/controller/PersonController.java     |   15 +-
+ .../techtrial/controller/RideController.java       |   26 +-
+ .../com/crossover/techtrial/dto/DriveRiderDTO.java |   69 ++
+ .../com/crossover/techtrial/dto/PersonDTO.java     |   49 +
+ .../java/com/crossover/techtrial/model/Person.java |   50 +-
+ .../java/com/crossover/techtrial/model/Ride.java   |  101 +-
+ .../techtrial/repositories/RideRepository.java     |    8 +-
+ .../techtrial/service/PersonServiceImpl.java       |   14 +-
+ .../crossover/techtrial/service/RideService.java   |    5 +-
+ .../techtrial/service/RideServiceImpl.java         |   25 +-
+ .../crossover/techtrial/util/CrossRideEnum.java    |   37 +
+ .../resources/db/changelog/db.changelog-1.1.xml    |  207 ++++
+ .../resources/db/changelog/db.changelog-master.xml |    1 +
+ .../techtrial/controller/PersonControllerTest.java |   43 +-
+ .../techtrial/controller/RideControllerTest.java   |  178 +++
+ .../repositories/PersonRepositoryTest.java         |   55 +
+ .../techtrial/service/PersonServiceTest.java       |   81 ++
+ 23 files changed, 3393 insertions(+), 104 deletions(-)
+ mode change 100755 => 100644 gradlew
+ create mode 100644 private/cache/retriever/catalog.xml
+ create mode 100644 private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
+ create mode 100644 private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+ create mode 100644 private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+ create mode 100644 src/main/java/com/crossover/techtrial/dto/DriveRiderDTO.java
+ create mode 100644 src/main/java/com/crossover/techtrial/dto/PersonDTO.java
+ create mode 100644 src/main/java/com/crossover/techtrial/util/CrossRideEnum.java
+ create mode 100644 src/main/resources/db/changelog/db.changelog-1.1.xml
+ create mode 100644 src/test/java/com/crossover/techtrial/controller/RideControllerTest.java
+ create mode 100644 src/test/java/com/crossover/techtrial/repositories/PersonRepositoryTest.java
+ create mode 100644 src/test/java/com/crossover/techtrial/service/PersonServiceTest.java
+
+diff --git a/.gitignore b/.gitignore
+index 38e8d91..5bd2c6b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -7,3 +7,4 @@ build/*
+ target/*
+ **/.DS_Store
+ **/.settings
++/.nb-gradle/
+\ No newline at end of file
+diff --git a/gradlew b/gradlew
+old mode 100755
+new mode 100644
+diff --git a/private/cache/retriever/catalog.xml b/private/cache/retriever/catalog.xml
+new file mode 100644
+index 0000000..67814f1
+--- /dev/null
++++ b/private/cache/retriever/catalog.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
++    <system systemId="http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd" uri="www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"/>
++    <system systemId="http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd" uri="www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"/>
++    <system systemId="http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd" uri="www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"/>
++</catalog>
+\ No newline at end of file
+diff --git a/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
+new file mode 100644
+index 0000000..c0d894e
+--- /dev/null
++++ b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
+@@ -0,0 +1,1234 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
++            targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog"
++            xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
++            elementFormDefault="qualified">
++
++    <xsd:simpleType name="propertyExpression" id="propertyExpression">
++        <xsd:restriction base="xsd:string">
++            <xsd:pattern value="$\{[\w\.]+\}"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="booleanExp" id="booleanExp">
++        <xsd:annotation>
++            <xsd:appinfo>
++                <xsd:documentation>Extension to standard XSD boolean type to allow ${} parameters</xsd:documentation>
++            </xsd:appinfo>
++        </xsd:annotation>
++        <xsd:union>
++            <xsd:simpleType>
++                <xsd:restriction base="xsd:boolean"/>
++            </xsd:simpleType>
++            <xsd:simpleType>
++                <xsd:restriction base="propertyExpression"/>
++            </xsd:simpleType>
++        </xsd:union>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="integerExp" id="integerExp">
++        <xsd:annotation>
++            <xsd:appinfo>
++                <xsd:documentation>Extension to standard XSD integer type to allow ${} parameters</xsd:documentation>
++            </xsd:appinfo>
++        </xsd:annotation>
++        <xsd:union>
++            <xsd:simpleType>
++                <xsd:restriction base="xsd:integer"/>
++            </xsd:simpleType>
++            <xsd:simpleType>
++                <xsd:restriction base="propertyExpression"/>
++            </xsd:simpleType>
++        </xsd:union>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeSetPreconditionErrorOrFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT"/>
++            <xsd:enumeration value="WARN"/>
++            <xsd:enumeration value="CONTINUE"/>
++            <xsd:enumeration value="MARK_RAN"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeLogPreconditionErrorOrFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT"/>
++            <xsd:enumeration value="WARN"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeLogPreconditionOnSqlOutput">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="TEST"/>
++            <xsd:enumeration value="FAIL"/>
++            <xsd:enumeration value="IGNORE"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeSetValidationFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT"/>
++            <xsd:enumeration value="MARK_RAN"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="objectQuotingStrategy">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="LEGACY"/>
++            <xsd:enumeration value="QUOTE_ALL_OBJECTS"/>
++            <xsd:enumeration value="QUOTE_ONLY_RESERVED_WORDS"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <!-- This is the main (root) part of the xsd -->
++    <xsd:element name="databaseChangeLog">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="file" type="xsd:string"/>
++                        <xsd:attribute name="name" type="xsd:string"/>
++                        <xsd:attribute name="value" type="xsd:string"/>
++                        <xsd:attribute name="dbms" type="xsd:string"/>
++                        <xsd:attribute name="context" type="xsd:string"/>
++                        <xsd:attribute name="labels" type="xsd:string"/>
++                        <xsd:attribute name="global" type="xsd:boolean"/>
++                    </xsd:complexType>
++                </xsd:element>
++
++                <xsd:element name="preConditions" minOccurs="0" maxOccurs="1">
++                    <xsd:complexType>
++                        <xsd:choice>
++                            <xsd:group ref="PreConditionChildren" maxOccurs="unbounded"/>
++                        </xsd:choice>
++                        <xsd:attribute name="onFailMessage" type="xsd:string"/>
++                        <xsd:attribute name="onErrorMessage" type="xsd:string"/>
++                        <xsd:attribute name="onFail" type="onChangeLogPreconditionErrorOrFail"/>
++                        <xsd:attribute name="onError" type="onChangeLogPreconditionErrorOrFail"/>
++                        <xsd:attribute name="onSqlOutput" type="onChangeLogPreconditionOnSqlOutput"/>
++                    </xsd:complexType>
++                </xsd:element>
++
++                <xsd:choice minOccurs="0" maxOccurs="unbounded">
++                    <xsd:element name="changeSet" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:sequence>
++                                <xsd:element name="validCheckSum" minOccurs="0" maxOccurs="unbounded">
++                                    <xsd:complexType mixed="true">
++                                        <xsd:sequence>
++                                            <xsd:element ref="comment" minOccurs="0" maxOccurs="1"/>
++                                        </xsd:sequence>
++                                    </xsd:complexType>
++                                </xsd:element>
++                                <xsd:element name="preConditions" minOccurs="0" maxOccurs="1">
++                                    <xsd:annotation>
++                                        <xsd:appinfo>
++                                            <xsd:documentation>onChangeLogPreconditionOnSqlOutput determines what should happen when evaluating this precondition in updateSQL mode. TEST: Run precondition, FAIL: Fail precondition,
++                                                IGNORE: Skip precondition check [DEFAULT]
++                                            </xsd:documentation>
++                                        </xsd:appinfo>
++                                    </xsd:annotation>
++                                    <xsd:complexType>
++                                        <xsd:choice>
++                                            <xsd:group ref="PreConditionChildren" maxOccurs="unbounded"/>
++                                        </xsd:choice>
++                                        <xsd:attribute name="onFailMessage" type="xsd:string"/>
++                                        <xsd:attribute name="onErrorMessage" type="xsd:string"/>
++                                        <xsd:attribute name="onFail" type="onChangeSetPreconditionErrorOrFail"/>
++                                        <xsd:attribute name="onError" type="onChangeSetPreconditionErrorOrFail"/>
++                                        <xsd:attribute name="onSqlOutput" type="onChangeLogPreconditionOnSqlOutput"/>
++                                    </xsd:complexType>
++                                </xsd:element>
++                                <xsd:choice>
++                                    <xsd:element ref="tagDatabase" maxOccurs="1"/>
++                                    <xsd:group ref="changeSetChildren" minOccurs="0" maxOccurs="unbounded"/>
++                                </xsd:choice>
++
++                                <xsd:element name="modifySql" minOccurs="0" maxOccurs="unbounded">
++                                    <xsd:complexType>
++                                        <xsd:choice>
++                                            <xsd:group ref="modifySqlChildren" minOccurs="1" maxOccurs="unbounded"/>
++                                        </xsd:choice>
++                                        <xsd:attribute name="dbms" type="xsd:string"/>
++                                        <xsd:attribute name="context" type="xsd:string"/>
++                                        <xsd:attribute name="labels" type="xsd:string"/>
++                                        <xsd:attribute name="applyToRollback" type="booleanExp"/>
++                                    </xsd:complexType>
++                                </xsd:element>
++
++                            </xsd:sequence>
++                            <xsd:attributeGroup ref="changeSetAttributes"/>
++                            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++
++                    <!-- include -->
++                    <xsd:element name="include" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:attribute name="file" type="xsd:string" use="required"/>
++                            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++                            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++                    <xsd:element name="includeAll" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:attribute name="path" type="xsd:string" use="required"/>
++                            <xsd:attribute name="errorIfMissingOrEmpty" type="booleanExp" default="false"/>
++                            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++                            <xsd:attribute name="resourceFilter" type="xsd:string"/>
++                            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++                </xsd:choice>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="changeLogAttributes"/>
++            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:group name="modifySqlChildren">
++        <xsd:choice>
++            <xsd:element name="replace" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="replace" type="xsd:string" use="required"/>
++                    <xsd:attribute name="with" type="xsd:string" use="required"/>
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="regExpReplace" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="replace" type="xsd:string" use="required"/>
++                    <xsd:attribute name="with" type="xsd:string" use="required"/>
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="prepend" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="value" type="xsd:string" use="required"/>
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="append" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="value" type="xsd:string" use="required"/>
++                </xsd:complexType>
++            </xsd:element>
++        </xsd:choice>
++    </xsd:group>
++
++    <!-- Attributes for DatabaseInfo -->
++    <xsd:attributeGroup name="DatabaseInfoAttributes">
++        <xsd:attribute name="type" type="xsd:string"/>
++        <xsd:attribute name="version" type="xsd:string"/>
++        <xsd:attribute name="username" type="xsd:string"/>
++        <xsd:attribute name="password" type="xsd:string"/>
++        <xsd:attribute name="port" type="integerExp"/>
++        <xsd:attribute name="host" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="driverName" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <!-- Attributes for changeSet -->
++    <xsd:attributeGroup name="changeLogAttributes">
++        <xsd:attribute name="logicalFilePath" type="xsd:string"/>
++        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" default="LEGACY"/>
++    </xsd:attributeGroup>
++
++    <!-- Attributes for changeSet -->
++    <xsd:attributeGroup name="changeSetAttributes">
++        <xsd:attribute name="id" type="xsd:string" use="required"/>
++        <xsd:attribute name="author" type="xsd:string" use="required"/>
++        <xsd:attribute name="context" type="xsd:string"/>
++        <xsd:attribute name="labels" type="xsd:string"/>
++        <xsd:attribute name="dbms" type="xsd:string"/>
++        <xsd:attribute name="runOnChange" type="booleanExp"/>
++        <xsd:attribute name="runAlways" type="booleanExp"/>
++        <xsd:attribute name="failOnError" type="booleanExp"/>
++        <xsd:attribute name="onValidationFail" type="onChangeSetValidationFail"/>
++        <xsd:attribute name="runInTransaction" type="booleanExp" default="true"/>
++        <xsd:attribute name="logicalFilePath" type="xsd:string"/>
++        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy"/>
++    </xsd:attributeGroup>
++
++    <!-- Attributes for constraints -->
++    <xsd:attributeGroup name="constraintsAttributes">
++        <xsd:attribute name="nullable" type="booleanExp"/>
++        <xsd:attribute name="primaryKey" type="booleanExp"/>
++        <xsd:attribute name="primaryKeyName" type="xsd:string"/>
++        <xsd:attribute name="primaryKeyTablespace" type="xsd:string"/>
++        <xsd:attribute name="unique" type="booleanExp"/>
++        <xsd:attribute name="uniqueConstraintName" type="xsd:string"/>
++        <xsd:attribute name="references" type="xsd:string"/>
++        <xsd:attribute name="referencedTableName" type="xsd:string"/>
++        <xsd:attribute name="referencedColumnNames" type="xsd:string"/>
++        <xsd:attribute name="foreignKeyName" type="xsd:string"/>
++        <xsd:attribute name="deleteCascade" type="booleanExp"/>
++        <xsd:attribute name="deferrable" type="booleanExp"/>
++        <xsd:attribute name="initiallyDeferred" type="booleanExp"/>
++        <xsd:attribute name="checkConstraint" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="column">
++        <xsd:attribute name="name" type="xsd:string"/>
++        <xsd:attribute name="computed" type="booleanExp"/>
++        <xsd:attribute name="type" type="xsd:string"/>
++        <xsd:attribute name="value" type="xsd:string"/>
++        <xsd:attribute name="valueNumeric" type="xsd:string"/>
++        <xsd:attribute name="valueBoolean" type="xsd:string"/>
++        <xsd:attribute name="valueDate" type="xsd:string"/>
++        <xsd:attribute name="valueComputed" type="xsd:string"/>
++        <xsd:attribute name="valueSequenceCurrent" type="xsd:string"/>
++        <xsd:attribute name="valueSequenceNext" type="xsd:string"/>
++        <xsd:attribute name="valueBlobFile" type="xsd:string"/>
++        <xsd:attribute name="valueClobFile" type="xsd:string"/>
++        <xsd:attribute name="defaultValue" type="xsd:string"/>
++        <xsd:attribute name="defaultValueNumeric" type="xsd:string"/>
++        <xsd:attribute name="defaultValueDate" type="xsd:string"/>
++        <xsd:attribute name="defaultValueBoolean" type="booleanExp"/>
++        <xsd:attribute name="defaultValueComputed" type="xsd:string"/>
++        <xsd:attribute name="defaultValueSequenceCurrent" type="xsd:string"/>
++        <xsd:attribute name="defaultValueSequenceNext" type="xsd:string"/>
++        <xsd:attribute name="autoIncrement" type="booleanExp"/>
++        <xsd:attribute name="startWith" type="xsd:long"/>
++        <xsd:attribute name="incrementBy" type="xsd:long"/>
++        <xsd:attribute name="remarks" type="xsd:string"/>
++        <xsd:attribute name="encoding" type="xsd:string">
++            <xsd:annotation>
++                <xsd:appinfo>
++                    <xsd:documentation>
++                        Used with valueClobFile to specify file encoding explicitly.
++                    </xsd:documentation>
++                </xsd:appinfo>
++            </xsd:annotation>
++        </xsd:attribute>
++        <xsd:attribute name="descending" type="booleanExp"/>
++        <xsd:anyAttribute namespace="##other" processContents="lax"/>
++    </xsd:attributeGroup>
++
++    <xsd:complexType name="columnType" mixed="true">
++        <xsd:sequence>
++            <xsd:element ref="constraints" minOccurs="0"/>
++            <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
++        </xsd:sequence>
++        <xsd:attributeGroup ref="column"/>
++        <xsd:anyAttribute namespace="##other" processContents="lax"/>
++    </xsd:complexType>
++
++    <xsd:attributeGroup name="param">
++        <xsd:attribute name="name" type="xsd:string"/>
++        <xsd:attribute name="value" type="xsd:string"/>
++        <xsd:attribute name="valueNumeric" type="xsd:string"/>
++        <xsd:attribute name="valueBoolean" type="xsd:string"/>
++        <xsd:attribute name="valueDate" type="xsd:string"/>
++        <xsd:attribute name="valueComputed" type="xsd:string"/>
++        <xsd:attribute name="valueSequenceNext" type="xsd:string"/>
++        <xsd:attribute name="valueSequenceCurrent" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="tableNameAttribute">
++        <xsd:attribute name="catalogName" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="dropTableAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute"/>
++        <xsd:attribute name="cascadeConstraints" type="booleanExp"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameTableAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="oldTableName" type="xsd:string" use="required"/>
++        <xsd:attribute name="newTableName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameViewAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="oldViewName" type="xsd:string" use="required"/>
++        <xsd:attribute name="newViewName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameColumnAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute"/>
++        <xsd:attribute name="oldColumnName" type="xsd:string" use="required"/>
++        <xsd:attribute name="newColumnName" type="xsd:string" use="required"/>
++        <xsd:attribute name="columnDataType" type="xsd:string"/>
++        <xsd:attribute name="remarks" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="dropColumnAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute"/>
++        <xsd:attribute name="columnName" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="sequenceAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="sequenceName" type="xsd:string" use="required"/>
++        <xsd:attribute name="startValue" type="xsd:string"/>
++        <xsd:attribute name="incrementBy" type="xsd:string"/>
++        <xsd:attribute name="maxValue" type="xsd:string"/>
++        <xsd:attribute name="minValue" type="xsd:string"/>
++        <xsd:attribute name="ordered" type="booleanExp"/>
++        <xsd:attribute name="cacheSize" type="xsd:nonNegativeInteger"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameSequenceAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string"/>
++        <xsd:attribute name="schemaName" type="xsd:string"/>
++        <xsd:attribute name="oldSequenceName" type="xsd:string" use="required"/>
++        <xsd:attribute name="newSequenceName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="indexName">
++        <xsd:attribute name="indexName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="createIndex">
++        <xsd:attributeGroup ref="tableNameAttribute"/>
++        <xsd:attributeGroup ref="indexName"/>
++        <xsd:attribute name="associatedWith" type="xsd:string" use="optional"/>
++        <xsd:attribute name="unique" type="booleanExp"/>
++        <xsd:attribute name="clustered" type="booleanExp"/>
++        <xsd:attribute name="tablespace" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++
++    <xsd:element name="addPrimaryKey">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnNames" type="xsd:string" use="required"/>
++            <xsd:attribute name="constraintName" type="xsd:string"/>
++            <xsd:attribute name="tablespace" type="xsd:string"/>
++            <xsd:attribute name="clustered" type="booleanExp"/>
++            <xsd:attribute name="forIndexCatalogName" type="xsd:string"/>
++            <xsd:attribute name="forIndexSchemaName" type="xsd:string"/>
++            <xsd:attribute name="forIndexName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropPrimaryKey">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="constraintName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addUniqueConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnNames" type="xsd:string" use="required"/>
++            <xsd:attribute name="constraintName" type="xsd:string"/>
++            <xsd:attribute name="tablespace" type="xsd:string"/>
++            <xsd:attribute name="disabled" type="booleanExp"/>
++            <xsd:attribute name="deferrable" type="booleanExp"/>
++            <xsd:attribute name="initiallyDeferred" type="booleanExp"/>
++            <xsd:attribute name="forIndexCatalogName" type="xsd:string"/>
++            <xsd:attribute name="forIndexSchemaName" type="xsd:string"/>
++            <xsd:attribute name="forIndexName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropUniqueConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="constraintName" type="xsd:string"/>
++            <xsd:attribute name="uniqueColumns" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="modifyDataType">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="newDataType" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addLookupTable">
++        <xsd:complexType>
++            <xsd:attribute name="existingTableCatalogName" type="xsd:string"/>
++            <xsd:attribute name="existingTableSchemaName" type="xsd:string"/>
++            <xsd:attribute name="existingTableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="existingColumnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="newTableCatalogName" type="xsd:string"/>
++            <xsd:attribute name="newTableSchemaName" type="xsd:string"/>
++            <xsd:attribute name="newTableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="newColumnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="newColumnDataType" type="xsd:string"/>
++            <xsd:attribute name="constraintName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addAutoIncrement">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnDataType" type="xsd:string"/>
++            <xsd:attribute name="startWith" type="xsd:long"/>
++            <xsd:attribute name="incrementBy" type="xsd:long"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addDefaultValue">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnDataType" type="xsd:string"/>
++            <xsd:attribute name="defaultValue" type="xsd:string"/>
++            <xsd:attribute name="defaultValueNumeric" type="xsd:string"/>
++            <xsd:attribute name="defaultValueDate" type="xsd:string"/>
++            <xsd:attribute name="defaultValueBoolean" type="xsd:string"/>
++            <xsd:attribute name="defaultValueComputed" type="xsd:string"/>
++            <xsd:attribute name="defaultValueSequenceNext" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropDefaultValue">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnDataType" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="loadData">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="index" type="integerExp"/>
++                        <xsd:attribute name="header" type="xsd:string"/>
++                        <xsd:attribute name="name" type="xsd:string"/>
++                        <xsd:attribute name="type" type="xsd:string"/>
++                        <xsd:attribute name="defaultValue" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueNumeric" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueDate" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueBoolean" type="booleanExp"/>
++                        <xsd:attribute name="defaultValueComputed" type="xsd:string"/>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="file" type="xsd:string"/>
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="separator" type="xsd:string" default=","/>
++            <xsd:attribute name="quotchar" type="xsd:string" default="&quot;"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="loadUpdateData">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="index" type="integerExp"/>
++                        <xsd:attribute name="header" type="xsd:string"/>
++                        <xsd:attribute name="name" type="xsd:string"/>
++                        <xsd:attribute name="type" type="xsd:string"/>
++                        <xsd:attribute name="defaultValue" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueNumeric" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueDate" type="xsd:string"/>
++                        <xsd:attribute name="defaultValueBoolean" type="booleanExp"/>
++                        <xsd:attribute name="defaultValueComputed" type="xsd:string"/>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="file" type="xsd:string"/>
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="primaryKey" type="xsd:string" use="required"/>
++            <xsd:attribute name="onlyUpdate" type="xsd:boolean" default="false"/>
++            <xsd:attribute name="separator" type="xsd:string" default=","/>
++            <xsd:attribute name="quotchar" type="xsd:string" default="&quot;"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:simpleType name="fkCascadeActionOptions">
++        <xsd:restriction base="xsd:token">
++            <xsd:enumeration value="CASCADE"></xsd:enumeration>
++            <xsd:enumeration value="SET NULL"></xsd:enumeration>
++            <xsd:enumeration value="SET DEFAULT"></xsd:enumeration>
++            <xsd:enumeration value="RESTRICT"></xsd:enumeration>
++            <xsd:enumeration value="NO ACTION"></xsd:enumeration>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:attributeGroup name="addForeignKeyConstraintAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string"/>
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string"/>
++        <xsd:attribute name="baseTableName" type="xsd:string" use="required"/>
++        <xsd:attribute name="baseColumnNames" type="xsd:string" use="required"/>
++        <xsd:attribute name="constraintName" type="xsd:string" use="required"/>
++        <xsd:attribute name="referencedTableCatalogName" type="xsd:string"/>
++        <xsd:attribute name="referencedTableSchemaName" type="xsd:string"/>
++        <xsd:attribute name="referencedTableName" type="xsd:string" use="required"/>
++        <xsd:attribute name="referencedColumnNames" type="xsd:string" use="required"/>
++        <xsd:attribute name="deferrable" type="booleanExp"/>
++        <xsd:attribute name="initiallyDeferred" type="booleanExp"/>
++        <xsd:attribute name="deleteCascade" type="booleanExp"/>
++        <xsd:attribute name="onDelete" type="fkCascadeActionOptions"/>
++        <xsd:attribute name="onUpdate" type="fkCascadeActionOptions"/>
++        <xsd:attribute name="referencesUniqueColumn" type="booleanExp"/>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="addNotNullConstraintAttrib">
++        <xsd:attributeGroup ref="tableNameAttribute"/>
++        <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++        <xsd:attribute name="defaultNullValue" type="xsd:string"/>
++        <xsd:attribute name="columnDataType" type="xsd:string"/>
++        <xsd:attribute name="constraintName" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++
++    <xsd:element name="addNotNullConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="addNotNullConstraintAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addForeignKeyConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="addForeignKeyConstraintAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dbmsAttrib">
++        <xsd:attribute name="type" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:element name="dbms">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dbmsAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="changeSetExecuted">
++        <xsd:complexType>
++            <xsd:attribute name="id" type="xsd:string" use="required"/>
++            <xsd:attribute name="author" type="xsd:string" use="required"/>
++            <xsd:attribute name="changeLogFile" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tableExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="columnExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sequenceExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="sequenceName" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="foreignKeyConstraintExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="foreignKeyTableName" type="xsd:string"/>
++            <xsd:attribute name="foreignKeyName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="indexExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="indexName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string"/>
++            <xsd:attribute name="columnNames" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="rowCount">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string"/>
++            <xsd:attribute name="expectedRows" type="xsd:int"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tableIsEmpty">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="changeLogPropertyDefined">
++        <xsd:complexType>
++            <xsd:attribute name="property" type="xsd:string" use="required"/>
++            <xsd:attribute name="value" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="primaryKeyExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="primaryKeyName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="viewExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="viewName" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sqlCheck">
++        <xsd:complexType mixed="true">
++            <xsd:attribute name="expectedResult" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="customPrecondition">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="name" type="xsd:string" use="required"/>
++                        <xsd:attribute name="value" type="xsd:string" use="required"/>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="className" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="and">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1" maxOccurs="unbounded"/>
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="or">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1" maxOccurs="unbounded"/>
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="not">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1" maxOccurs="unbounded"/>
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="runningAsAttrib">
++        <xsd:attribute name="username" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:element name="runningAs">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="runningAsAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="objectQuotingStrategyAttrib">
++        <xsd:attribute name="strategy" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:element name="expectedQuotingStrategy">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="objectQuotingStrategyAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dropForeignKeyConstraintAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string"/>
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string"/>
++        <xsd:attribute name="baseTableName" type="xsd:string" use="required"/>
++        <xsd:attribute name="constraintName" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <xsd:element name="dropForeignKeyConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropForeignKeyConstraintAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dropAllForeignKeyConstraintsAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string"/>
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string"/>
++        <xsd:attribute name="baseTableName" type="xsd:string" use="required"/>
++    </xsd:attributeGroup>
++
++    <xsd:element name="dropAllForeignKeyConstraints">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropAllForeignKeyConstraintsAttrib"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropNotNullConstraint">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnDataType" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="setTableRemarks">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="remarks" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="setColumnRemarks">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" use="required"/>
++            <xsd:attribute name="columnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="remarks" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="constraints">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="constraintsAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++
++    <xsd:element name="column">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="constraints" minOccurs="0"/>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="column"/>
++            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="param">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="param"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for createTable -->
++    <xsd:element name="createTable">
++        <xsd:complexType>
++            <xsd:choice maxOccurs="unbounded">
++                <xsd:element ref="column" minOccurs="1" maxOccurs="unbounded"/>
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
++            </xsd:choice>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="tablespace" type="xsd:string"/>
++            <xsd:attribute name="remarks" type="xsd:string"/>
++            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for createView -->
++    <xsd:element name="createView">
++        <xsd:complexType>
++            <xsd:simpleContent>
++                <xsd:extension base="xsd:string">
++                    <xsd:attribute name="catalogName" type="xsd:string"/>
++                    <xsd:attribute name="schemaName" type="xsd:string"/>
++                    <xsd:attribute name="viewName" type="xsd:string" use="required"/>
++                    <xsd:attribute name="replaceIfExists" type="booleanExp"/>
++                    <xsd:attribute name="fullDefinition" type="booleanExp"/>
++                </xsd:extension>
++            </xsd:simpleContent>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for insert -->
++    <xsd:element name="insert">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element ref="column" maxOccurs="unbounded"/>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="dbms" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="update">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="column" minOccurs="1" maxOccurs="unbounded"/>
++                <xsd:element name="where" minOccurs="0" maxOccurs="1"/>
++                <xsd:element ref="whereParams" minOccurs="0" maxOccurs="1"/>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="whereParams">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="param" minOccurs="1" maxOccurs="unbounded"/>
++            </xsd:sequence>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="delete">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="where" minOccurs="0" maxOccurs="1"/>
++                <xsd:element ref="whereParams" minOccurs="0" maxOccurs="1"/>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for addColum -->
++    <xsd:element name="addColumn">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="1" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:complexContent mixed="true">
++                            <xsd:extension base="columnType">
++                                <xsd:attribute name="beforeColumn" type="xsd:string"/>
++                                <xsd:attribute name="afterColumn" type="xsd:string"/>
++                                <xsd:attribute name="position" type="xsd:integer"/>
++                            </xsd:extension>
++                        </xsd:complexContent>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="rollback">
++        <xsd:complexType mixed="true">
++            <xsd:choice>
++                <xsd:group ref="changeSetChildren" minOccurs="0" maxOccurs="unbounded"/>
++            </xsd:choice>
++            <xsd:attribute name="changeSetPath" type="xsd:string"/>
++            <xsd:attribute name="changeSetAuthor" type="xsd:string"/>
++            <xsd:attribute name="changeSetId" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- comment -->
++    <xsd:element name="comment" type="xsd:string"/>
++
++    <!-- sql -->
++    <xsd:element name="sql">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="comment" minOccurs="0" maxOccurs="1"/>
++            </xsd:sequence>
++            <xsd:attribute name="stripComments" type="booleanExp"/>
++            <xsd:attribute name="splitStatements" type="booleanExp"/>
++            <xsd:attribute name="endDelimiter" type="xsd:string"/>
++            <xsd:attribute name="dbms" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createProcedure">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="comment" minOccurs="0" maxOccurs="1"/>
++            </xsd:sequence>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++            <xsd:attribute name="procedureName" type="xsd:string"/>
++            <xsd:attribute name="path" type="xsd:string"/>
++            <xsd:attribute name="encoding" type="xsd:string"/>
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++            <xsd:attribute name="dbms" type="xsd:string"/>
++            <xsd:attribute name="replaceIfExists" type="xsd:boolean"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="executeCommand">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="arg" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="value" type="xsd:string" use="required"/>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="executable" type="xsd:string" use="required"/>
++            <xsd:attribute name="os" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sqlFile">
++        <xsd:complexType>
++            <xsd:attribute name="path" type="xsd:string" use="required"/>
++            <xsd:attribute name="stripComments" type="booleanExp"/>
++            <xsd:attribute name="splitStatements" type="booleanExp"/>
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="endDelimiter" type="xsd:string"/>
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp"/>
++            <xsd:attribute name="dbms" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tagDatabase">
++        <xsd:complexType>
++            <xsd:attribute name="tag" type="xsd:string" use="required"/>
++            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="stop">
++        <xsd:complexType mixed="true"/>
++    </xsd:element>
++
++    <xsd:element name="empty"/>
++
++    <xsd:element name="output">
++        <xsd:complexType mixed="true">
++            <xsd:attribute name="target" type="xsd:string"/>
++        </xsd:complexType>
++
++    </xsd:element>
++
++    <!-- renameTable -->
++    <xsd:element name="renameTable">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameTableAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="renameView">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameViewAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- dropTable -->
++    <xsd:element name="dropTable">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropTableAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropView">
++        <xsd:complexType>
++            <xsd:attribute name="viewName" type="xsd:string" use="required"/>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropProcedure">
++        <xsd:complexType>
++            <xsd:attribute name="procedureName" type="xsd:string" use="required"/>
++            <xsd:attribute name="catalogName" type="xsd:string"/>
++            <xsd:attribute name="schemaName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- renameColumn -->
++    <xsd:element name="renameColumn">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameColumnAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropColumn">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded" type="columnType"/>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="dropColumnAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="mergeColumns">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attribute name="column1Name" type="xsd:string" use="required"/>
++            <xsd:attribute name="joinString" type="xsd:string" use="required"/>
++            <xsd:attribute name="column2Name" type="xsd:string" use="required"/>
++            <xsd:attribute name="finalColumnName" type="xsd:string" use="required"/>
++            <xsd:attribute name="finalColumnType" type="xsd:string" use="required"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes"/>
++            <xsd:attribute name="cycle" type="booleanExp">
++                <xsd:annotation>
++                    <xsd:documentation>
++                        true for a cycling sequence, false for a non-cycling sequence.
++                        Default is false.
++                    </xsd:documentation>
++                </xsd:annotation>
++            </xsd:attribute>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="alterSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="renameSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameSequenceAttributes"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createIndex">
++        <xsd:complexType>
++            <xsd:choice maxOccurs="unbounded">
++                <xsd:element ref="column" maxOccurs="unbounded"/>
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
++            </xsd:choice>
++            <xsd:attributeGroup ref="createIndex"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropIndex">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute"/>
++            <xsd:attributeGroup ref="indexName"/>
++            <xsd:attribute name="associatedWith" type="xsd:string" use="optional"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="customChange">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType mixed="true">
++                        <xsd:attribute name="name" type="xsd:string" use="required"/>
++                        <xsd:attribute name="value" type="xsd:string"/>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="class" type="xsd:string" use="required"/>
++            <xsd:anyAttribute processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++
++    <!-- Children for changeSet -->
++    <xsd:group name="changeSetChildren">
++        <xsd:choice>
++            <xsd:element ref="comment" maxOccurs="1"/>
++            <xsd:element ref="createTable" maxOccurs="unbounded"/>
++            <xsd:element ref="dropTable" maxOccurs="unbounded"/>
++            <xsd:element ref="createView" maxOccurs="unbounded"/>
++            <xsd:element ref="renameView" maxOccurs="unbounded"/>
++            <xsd:element ref="dropView" maxOccurs="unbounded"/>
++            <xsd:element ref="insert" maxOccurs="unbounded"/>
++            <xsd:element ref="addColumn" maxOccurs="unbounded"/>
++            <xsd:element ref="sql" maxOccurs="unbounded"/>
++            <xsd:element ref="createProcedure" maxOccurs="unbounded"/>
++            <xsd:element ref="dropProcedure" maxOccurs="unbounded"/>
++            <xsd:element ref="sqlFile" maxOccurs="unbounded"/>
++            <xsd:element ref="renameTable" maxOccurs="unbounded"/>
++            <xsd:element ref="renameColumn" maxOccurs="unbounded"/>
++            <xsd:element ref="dropColumn" maxOccurs="unbounded"/>
++            <xsd:element ref="mergeColumns" maxOccurs="unbounded"/>
++            <xsd:element ref="modifyDataType" maxOccurs="unbounded"/>
++            <xsd:element ref="createSequence" maxOccurs="unbounded"/>
++            <xsd:element ref="alterSequence" maxOccurs="unbounded"/>
++            <xsd:element ref="dropSequence" maxOccurs="unbounded"/>
++            <xsd:element ref="renameSequence" maxOccurs="unbounded"/>
++            <xsd:element ref="createIndex" maxOccurs="unbounded"/>
++            <xsd:element ref="dropIndex" maxOccurs="unbounded"/>
++            <xsd:element ref="addNotNullConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="dropNotNullConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="addForeignKeyConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="dropForeignKeyConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="dropAllForeignKeyConstraints"
++                         maxOccurs="unbounded"/>
++            <xsd:element ref="addPrimaryKey" maxOccurs="unbounded"/>
++            <xsd:element ref="dropPrimaryKey" maxOccurs="unbounded"/>
++            <xsd:element ref="addLookupTable" maxOccurs="unbounded"/>
++            <xsd:element ref="addAutoIncrement" maxOccurs="unbounded"/>
++            <xsd:element ref="addDefaultValue" maxOccurs="unbounded"/>
++            <xsd:element ref="dropDefaultValue" maxOccurs="unbounded"/>
++            <xsd:element ref="addUniqueConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="dropUniqueConstraint" maxOccurs="unbounded"/>
++            <xsd:element ref="setTableRemarks" maxOccurs="unbounded"/>
++            <xsd:element ref="setColumnRemarks" maxOccurs="unbounded"/>
++            <xsd:element ref="customChange" maxOccurs="unbounded"/>
++            <xsd:element ref="update" maxOccurs="unbounded"/>
++            <xsd:element ref="delete" maxOccurs="unbounded"/>
++            <xsd:element ref="loadData" maxOccurs="unbounded"/>
++            <xsd:element ref="loadUpdateData" maxOccurs="unbounded"/>
++            <xsd:element ref="executeCommand" maxOccurs="unbounded"/>
++            <xsd:element ref="stop" maxOccurs="unbounded"/>
++            <xsd:element ref="output" maxOccurs="unbounded"/>
++            <xsd:element ref="empty" maxOccurs="unbounded"/>
++            <xsd:element ref="rollback" maxOccurs="1"/>
++            <xsd:any namespace="##other" processContents="lax" minOccurs="0"
++                     maxOccurs="unbounded"/>
++        </xsd:choice>
++    </xsd:group>
++
++    <!-- Children for Precondition -->
++    <xsd:group name="PreConditionChildren">
++        <xsd:sequence>
++            <xsd:choice>
++                <xsd:element ref="and" maxOccurs="unbounded"/>
++                <xsd:element ref="or" maxOccurs="unbounded"/>
++                <xsd:element ref="not" maxOccurs="unbounded"/>
++                <xsd:element ref="dbms" maxOccurs="unbounded"/>
++                <xsd:element ref="runningAs" maxOccurs="unbounded"/>
++                <xsd:element ref="changeSetExecuted" maxOccurs="unbounded"/>
++                <xsd:element ref="tableExists" maxOccurs="unbounded"/>
++                <xsd:element ref="columnExists" maxOccurs="unbounded"/>
++                <xsd:element ref="sequenceExists" maxOccurs="unbounded"/>
++                <xsd:element ref="foreignKeyConstraintExists" maxOccurs="unbounded"/>
++                <xsd:element ref="indexExists" maxOccurs="unbounded"/>
++                <xsd:element ref="primaryKeyExists" maxOccurs="unbounded"/>
++                <xsd:element ref="viewExists" maxOccurs="unbounded"/>
++                <xsd:element ref="tableIsEmpty" maxOccurs="unbounded"/>
++                <xsd:element ref="rowCount" maxOccurs="unbounded"/>
++                <xsd:element ref="sqlCheck" maxOccurs="unbounded"/>
++                <xsd:element ref="changeLogPropertyDefined" maxOccurs="unbounded"/>
++                <xsd:element ref="expectedQuotingStrategy" maxOccurs="unbounded"/>
++                <xsd:element ref="customPrecondition" maxOccurs="unbounded"/>
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
++            </xsd:choice>
++        </xsd:sequence>
++    </xsd:group>
++
++</xsd:schema>
+diff --git a/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+new file mode 100644
+index 0000000..bcd785f
+--- /dev/null
++++ b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+@@ -0,0 +1,1285 @@
++﻿<?xml version="1.0" encoding="UTF-8"?>
++
++<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
++            targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
++            elementFormDefault="qualified">
++
++    <xsd:simpleType name="propertyExpression" id="propertyExpression">
++        <xsd:restriction base="xsd:string">
++            <xsd:pattern value="$\{[\w\.]+\}"/>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="booleanExp" id="booleanExp">
++        <xsd:annotation>
++            <xsd:appinfo>
++                <xsd:documentation>Extension to standard XSD boolean type to allow ${} parameters</xsd:documentation>
++            </xsd:appinfo>
++        </xsd:annotation>
++        <xsd:union>
++            <xsd:simpleType>
++                <xsd:restriction base="xsd:boolean"/>
++            </xsd:simpleType>
++            <xsd:simpleType>
++                <xsd:restriction base="propertyExpression"/>
++            </xsd:simpleType>
++        </xsd:union>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="integerExp" id="integerExp">
++        <xsd:annotation>
++            <xsd:appinfo>
++                <xsd:documentation>Extension to standard XSD integer type to allow ${} parameters</xsd:documentation>
++            </xsd:appinfo>
++        </xsd:annotation>
++        <xsd:union>
++            <xsd:simpleType>
++                <xsd:restriction base="xsd:integer"/>
++            </xsd:simpleType>
++            <xsd:simpleType>
++                <xsd:restriction base="propertyExpression"/>
++            </xsd:simpleType>
++        </xsd:union>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeSetPreconditionErrorOrFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT" />
++            <xsd:enumeration value="WARN" />
++            <xsd:enumeration value="CONTINUE" />
++            <xsd:enumeration value="MARK_RAN" />
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeLogPreconditionErrorOrFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT" />
++            <xsd:enumeration value="WARN" />
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeLogPreconditionOnSqlOutput">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="TEST" />
++            <xsd:enumeration value="FAIL" />
++            <xsd:enumeration value="IGNORE" />
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="onChangeSetValidationFail">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="HALT" />
++            <xsd:enumeration value="MARK_RAN" />
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:simpleType name="objectQuotingStrategy">
++        <xsd:restriction base="xsd:string">
++            <xsd:enumeration value="LEGACY" />
++            <xsd:enumeration value="QUOTE_ALL_OBJECTS" />
++            <xsd:enumeration value="QUOTE_ONLY_RESERVED_WORDS" />
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <!-- This is the main (root) part of the xsd -->
++    <xsd:element name="databaseChangeLog">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="file" type="xsd:string" />
++                        <xsd:attribute name="name" type="xsd:string" />
++                        <xsd:attribute name="value" type="xsd:string" />
++                        <xsd:attribute name="dbms" type="xsd:string" />
++                        <xsd:attribute name="context" type="xsd:string" />
++                        <xsd:attribute name="labels" type="xsd:string" />
++                        <xsd:attribute name="global" type="xsd:boolean"/>
++                    </xsd:complexType>
++                </xsd:element>
++
++                <xsd:element name="preConditions" minOccurs="0"
++                             maxOccurs="1">
++                    <xsd:complexType>
++                        <xsd:choice>
++                            <xsd:group ref="PreConditionChildren" maxOccurs="unbounded" />
++                        </xsd:choice>
++                        <xsd:attribute name="onFailMessage" type="xsd:string" />
++                        <xsd:attribute name="onErrorMessage" type="xsd:string" />
++                        <xsd:attribute name="onFail"
++                                       type="onChangeLogPreconditionErrorOrFail" />
++                        <xsd:attribute name="onError"
++                                       type="onChangeLogPreconditionErrorOrFail" />
++                        <xsd:attribute name="onSqlOutput"
++                                       type="onChangeLogPreconditionOnSqlOutput" />
++                    </xsd:complexType>
++                </xsd:element>
++
++                <xsd:choice minOccurs="0" maxOccurs="unbounded">
++                    <xsd:element name="changeSet" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:sequence>
++                                <xsd:element name="validCheckSum" minOccurs="0"
++                                             maxOccurs="unbounded">
++                                    <xsd:complexType mixed="true">
++                                        <xsd:sequence>
++                                            <xsd:element ref="comment" minOccurs="0"
++                                                         maxOccurs="1" />
++                                        </xsd:sequence>
++                                    </xsd:complexType>
++                                </xsd:element>
++                                <xsd:element name="preConditions" minOccurs="0"
++                                             maxOccurs="1">
++                                    <xsd:annotation>
++                                        <xsd:appinfo>
++                                            <xsd:documentation>onChangeLogPreconditionOnSqlOutput determines what should happen when evaluating this precondition in updateSQL mode.  TEST: Run precondition, FAIL: Fail precondition, IGNORE: Skip precondition check [DEFAULT]</xsd:documentation>
++                                        </xsd:appinfo>
++                                    </xsd:annotation>
++                                    <xsd:complexType>
++                                        <xsd:choice>
++                                            <xsd:group ref="PreConditionChildren" maxOccurs="unbounded" />
++                                        </xsd:choice>
++                                        <xsd:attribute name="onFailMessage" type="xsd:string" />
++                                        <xsd:attribute name="onErrorMessage" type="xsd:string" />
++                                        <xsd:attribute name="onFail"
++                                                       type="onChangeSetPreconditionErrorOrFail" />
++                                        <xsd:attribute name="onError"
++                                                       type="onChangeSetPreconditionErrorOrFail" />
++                                        <xsd:attribute name="onSqlOutput"
++                                                       type="onChangeLogPreconditionOnSqlOutput" />
++                                    </xsd:complexType>
++                                </xsd:element>
++                                <xsd:choice>
++                                    <xsd:element ref="tagDatabase" maxOccurs="1" />
++                                    <xsd:group ref="changeSetChildren" minOccurs="0"
++                                               maxOccurs="unbounded" />
++                                </xsd:choice>
++
++                                <xsd:element name="modifySql" minOccurs="0"
++                                             maxOccurs="unbounded">
++                                    <xsd:complexType>
++                                        <xsd:choice>
++                                            <xsd:group ref="modifySqlChildren" minOccurs="1"
++                                                       maxOccurs="unbounded" />
++                                        </xsd:choice>
++                                        <xsd:attribute name="dbms" type="xsd:string" />
++                                        <xsd:attribute name="context" type="xsd:string" />
++                                        <xsd:attribute name="labels" type="xsd:string" />
++                                        <xsd:attribute name="applyToRollback" type="booleanExp" />
++                                    </xsd:complexType>
++                                </xsd:element>
++
++                            </xsd:sequence>
++                            <xsd:attributeGroup ref="changeSetAttributes" />
++                            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++
++                    <!-- include -->
++                    <xsd:element name="include" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:attribute name="file" type="xsd:string" use="required" />
++                            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++                            <xsd:attribute name="context" type="xsd:string" />
++                            <xsd:anyAttribute namespace="##other"  processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++                    <xsd:element name="includeAll" minOccurs="0" maxOccurs="unbounded">
++                        <xsd:complexType>
++                            <xsd:attribute name="path" type="xsd:string" use="required" />
++                            <xsd:attribute name="errorIfMissingOrEmpty" type="booleanExp" default="false"/>
++                            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++                            <xsd:attribute name="resourceComparator" type="xsd:string"/>
++                            <xsd:attribute name="filter" type="xsd:string" />
++                            <xsd:attribute name="context" type="xsd:string" />
++                            <xsd:anyAttribute namespace="##other"  processContents="lax"/>
++                        </xsd:complexType>
++                    </xsd:element>
++                </xsd:choice>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="changeLogAttributes" />
++            <xsd:anyAttribute namespace="##other"  processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:group name="modifySqlChildren">
++        <xsd:choice>
++            <xsd:element name="replace" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="replace" type="xsd:string" use="required" />
++                    <xsd:attribute name="with" type="xsd:string" use="required" />
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="regExpReplace" minOccurs="0"
++                         maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="replace" type="xsd:string" use="required" />
++                    <xsd:attribute name="with" type="xsd:string" use="required" />
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="prepend" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="value" type="xsd:string" use="required" />
++                </xsd:complexType>
++            </xsd:element>
++            <xsd:element name="append" minOccurs="0" maxOccurs="unbounded">
++                <xsd:complexType>
++                    <xsd:attribute name="value" type="xsd:string" use="required" />
++                </xsd:complexType>
++            </xsd:element>
++        </xsd:choice>
++    </xsd:group>
++
++    <!-- Attributes for DatabaseInfo -->
++    <xsd:attributeGroup name="DatabaseInfoAttributes">
++        <xsd:attribute name="type" type="xsd:string" />
++        <xsd:attribute name="version" type="xsd:string" />
++        <xsd:attribute name="username" type="xsd:string" />
++        <xsd:attribute name="password" type="xsd:string" />
++        <xsd:attribute name="port" type="integerExp" />
++        <xsd:attribute name="host" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="driverName" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <!-- Attributes for changeSet -->
++    <xsd:attributeGroup name="changeLogAttributes">
++        <xsd:attribute name="logicalFilePath" type="xsd:string" />
++        <xsd:attribute name="context" type="xsd:string" />
++        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" default="LEGACY" />
++    </xsd:attributeGroup>
++
++    <!-- Attributes for changeSet -->
++    <xsd:attributeGroup name="changeSetAttributes">
++        <xsd:attribute name="id" type="xsd:string" use="required" />
++        <xsd:attribute name="author" type="xsd:string" use="required" />
++        <xsd:attribute name="context" type="xsd:string" />
++        <xsd:attribute name="labels" type="xsd:string" />
++        <xsd:attribute name="dbms" type="xsd:string" />
++        <xsd:attribute name="runOnChange" type="booleanExp" />
++        <xsd:attribute name="runAlways" type="booleanExp" />
++        <xsd:attribute name="failOnError" type="booleanExp" />
++        <xsd:attribute name="onValidationFail" type="onChangeSetValidationFail" />
++        <xsd:attribute name="runInTransaction" type="booleanExp" default="true" />
++        <xsd:attribute name="logicalFilePath" type="xsd:string" />
++        <xsd:attribute name="objectQuotingStrategy" type="objectQuotingStrategy" />
++        <xsd:attribute name="created" type="xsd:string"/>
++        <xsd:attribute name="runOrder" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++    <!-- Attributes for constraints -->
++    <xsd:attributeGroup name="constraintsAttributes">
++        <xsd:attribute name="nullable" type="booleanExp" />
++        <xsd:attribute name="primaryKey" type="booleanExp" />
++        <xsd:attribute name="primaryKeyName" type="xsd:string" />
++        <xsd:attribute name="primaryKeyTablespace" type="xsd:string" />
++        <xsd:attribute name="unique" type="booleanExp" />
++        <xsd:attribute name="uniqueConstraintName" type="xsd:string" />
++        <xsd:attribute name="references" type="xsd:string" />
++        <xsd:attribute name="referencedTableCatalogName" type="xsd:string" />
++        <xsd:attribute name="referencedTableSchemaName" type="xsd:string" />
++        <xsd:attribute name="referencedTableName" type="xsd:string"/>
++        <xsd:attribute name="referencedColumnNames" type="xsd:string"/>
++        <xsd:attribute name="foreignKeyName" type="xsd:string" />
++        <xsd:attribute name="deleteCascade" type="booleanExp" />
++        <xsd:attribute name="deferrable" type="booleanExp" />
++        <xsd:attribute name="initiallyDeferred" type="booleanExp" />
++        <xsd:attribute name="checkConstraint" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="column">
++        <xsd:attribute name="name" type="xsd:string"/>
++        <xsd:attribute name="computed" type="booleanExp"/>
++        <xsd:attribute name="type" type="xsd:string" />
++        <xsd:attribute name="value" type="xsd:string" />
++        <xsd:attribute name="valueNumeric" type="xsd:string" />
++        <xsd:attribute name="valueBoolean" type="xsd:string" />
++        <xsd:attribute name="valueDate" type="xsd:string" />
++        <xsd:attribute name="valueComputed" type="xsd:string" />
++        <xsd:attribute name="valueSequenceCurrent" type="xsd:string" />
++        <xsd:attribute name="valueSequenceNext" type="xsd:string" />
++        <xsd:attribute name="valueBlobFile" type="xsd:string"/>
++        <xsd:attribute name="valueClobFile" type="xsd:string"/>
++        <xsd:attribute name="defaultValue" type="xsd:string" />
++        <xsd:attribute name="defaultValueNumeric" type="xsd:string" />
++        <xsd:attribute name="defaultValueDate" type="xsd:string" />
++        <xsd:attribute name="defaultValueBoolean" type="booleanExp" />
++        <xsd:attribute name="defaultValueComputed" type="xsd:string" />
++        <xsd:attribute name="defaultValueSequenceCurrent" type="xsd:string" />
++        <xsd:attribute name="defaultValueSequenceNext" type="xsd:string" />
++        <xsd:attribute name="autoIncrement" type="booleanExp" />
++        <xsd:attribute name="startWith" type="xsd:long" />
++        <xsd:attribute name="incrementBy" type="xsd:long" />
++        <xsd:attribute name="remarks" type="xsd:string" />
++        <xsd:attribute name="encoding" type="xsd:string">
++            <xsd:annotation>
++                <xsd:appinfo>
++                    <xsd:documentation>
++                        Used with valueClobFile to specify file encoding explicitly.
++                    </xsd:documentation>
++                </xsd:appinfo>
++            </xsd:annotation>
++        </xsd:attribute>
++        <xsd:anyAttribute namespace="##other" processContents="lax"/>
++    </xsd:attributeGroup>
++
++    <xsd:complexType name="columnType" mixed="true">
++        <xsd:sequence>
++            <xsd:element ref="constraints" minOccurs="0"/>
++            <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
++        </xsd:sequence>
++        <xsd:attributeGroup ref="column"/>
++        <xsd:anyAttribute namespace="##other" processContents="lax" />
++    </xsd:complexType>
++
++    <xsd:attributeGroup name="param">
++        <xsd:attribute name="name" type="xsd:string" />
++        <xsd:attribute name="value" type="xsd:string" />
++        <xsd:attribute name="valueNumeric" type="xsd:string" />
++        <xsd:attribute name="valueBoolean" type="xsd:string" />
++        <xsd:attribute name="valueDate" type="xsd:string" />
++        <xsd:attribute name="valueComputed" type="xsd:string" />
++        <xsd:attribute name="valueSequenceNext" type="xsd:string" />
++        <xsd:attribute name="valueSequenceCurrent" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="tableNameAttribute">
++        <xsd:attribute name="catalogName" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="tableName" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="dropTableAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute" />
++        <xsd:attribute name="cascadeConstraints" type="booleanExp" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameTableAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="oldTableName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="newTableName" type="xsd:string"
++                       use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameViewAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="oldViewName" type="xsd:string" use="required" />
++        <xsd:attribute name="newViewName" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameColumnAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute" />
++        <xsd:attribute name="oldColumnName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="newColumnName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="columnDataType" type="xsd:string" />
++        <xsd:attribute name="remarks" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="dropColumnAttributes">
++        <xsd:attributeGroup ref="tableNameAttribute" />
++        <xsd:attribute name="columnName" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="sequenceAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="sequenceName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="startValue" type="xsd:string" />
++        <xsd:attribute name="incrementBy" type="xsd:string" />
++        <xsd:attribute name="maxValue" type="xsd:string" />
++        <xsd:attribute name="minValue" type="xsd:string" />
++        <xsd:attribute name="ordered" type="booleanExp" />
++        <xsd:attribute name="cacheSize" type="xsd:nonNegativeInteger" />
++        <xsd:attribute name="cycle" type="booleanExp">
++            <xsd:annotation>
++                <xsd:documentation>
++                    true for a cycling sequence, false for a non-cycling sequence.
++                    Default is false.
++                </xsd:documentation>
++            </xsd:annotation>
++        </xsd:attribute>
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="renameSequenceAttributes">
++        <xsd:attribute name="catalogName" type="xsd:string" />
++        <xsd:attribute name="schemaName" type="xsd:string" />
++        <xsd:attribute name="oldSequenceName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="newSequenceName" type="xsd:string"
++                       use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="indexName">
++        <xsd:attribute name="indexName" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="createIndex">
++        <xsd:attributeGroup ref="tableNameAttribute" />
++        <xsd:attributeGroup ref="indexName" />
++        <xsd:attribute name="associatedWith" type="xsd:string" use="optional" />
++        <xsd:attribute name="unique" type="booleanExp" />
++        <xsd:attribute name="clustered" type="booleanExp" />
++        <xsd:attribute name="tablespace" type="xsd:string" />
++    </xsd:attributeGroup>
++
++
++    <xsd:element name="addPrimaryKey">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnNames" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="constraintName" type="xsd:string" />
++            <xsd:attribute name="tablespace" type="xsd:string" />
++            <xsd:attribute name="clustered" type="booleanExp" />
++            <xsd:attribute name="forIndexCatalogName" type="xsd:string" />
++            <xsd:attribute name="forIndexSchemaName" type="xsd:string" />
++            <xsd:attribute name="forIndexName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropPrimaryKey">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="constraintName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addUniqueConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnNames" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="constraintName" type="xsd:string" />
++            <xsd:attribute name="tablespace" type="xsd:string" />
++            <xsd:attribute name="disabled" type="booleanExp" />
++            <xsd:attribute name="deferrable" type="booleanExp" />
++            <xsd:attribute name="initiallyDeferred" type="booleanExp" />
++            <xsd:attribute name="forIndexCatalogName" type="xsd:string" />
++            <xsd:attribute name="forIndexSchemaName" type="xsd:string" />
++            <xsd:attribute name="forIndexName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropUniqueConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="constraintName" type="xsd:string" />
++            <xsd:attribute name="uniqueColumns" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="modifyDataType">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="newDataType" type="xsd:string" use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addLookupTable">
++        <xsd:complexType>
++            <xsd:attribute name="existingTableCatalogName" type="xsd:string" />
++            <xsd:attribute name="existingTableSchemaName" type="xsd:string" />
++            <xsd:attribute name="existingTableName" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="existingColumnName" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="newTableCatalogName" type="xsd:string" />
++            <xsd:attribute name="newTableSchemaName" type="xsd:string" />
++            <xsd:attribute name="newTableName" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="newColumnName" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="newColumnDataType" type="xsd:string" />
++            <xsd:attribute name="constraintName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addAutoIncrement">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnDataType" type="xsd:string" />
++            <xsd:attribute name="startWith" type="xsd:long" />
++            <xsd:attribute name="incrementBy" type="xsd:long" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addDefaultValue">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnDataType" type="xsd:string" />
++            <xsd:attribute name="defaultValue" type="xsd:string" />
++            <xsd:attribute name="defaultValueNumeric" type="xsd:string" />
++            <xsd:attribute name="defaultValueDate" type="xsd:string" />
++            <xsd:attribute name="defaultValueBoolean" type="xsd:string" />
++            <xsd:attribute name="defaultValueComputed" type="xsd:string" />
++            <xsd:attribute name="defaultValueSequenceNext" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropDefaultValue">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnDataType" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="loadData">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="index" type="integerExp" />
++                        <xsd:attribute name="header" type="xsd:string" />
++                        <xsd:attribute name="name" type="xsd:string" />
++                        <xsd:attribute name="type" type="xsd:string" />
++                        <xsd:attribute name="defaultValue" type="xsd:string" />
++                        <xsd:attribute name="defaultValueNumeric" type="xsd:string" />
++                        <xsd:attribute name="defaultValueDate" type="xsd:string" />
++                        <xsd:attribute name="defaultValueBoolean" type="booleanExp" />
++                        <xsd:attribute name="defaultValueComputed" type="xsd:string" />
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="file" type="xsd:string" />
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="separator" type="xsd:string" default=","/>
++            <xsd:attribute name="quotchar" type="xsd:string" default="&quot;"/>
++            <xsd:attribute name="commentLineStartsWith" type="xsd:string" default="#" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="loadUpdateData">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="index" type="integerExp" />
++                        <xsd:attribute name="header" type="xsd:string" />
++                        <xsd:attribute name="name" type="xsd:string" />
++                        <xsd:attribute name="type" type="xsd:string" />
++                        <xsd:attribute name="defaultValue" type="xsd:string" />
++                        <xsd:attribute name="defaultValueNumeric" type="xsd:string" />
++                        <xsd:attribute name="defaultValueDate" type="xsd:string" />
++                        <xsd:attribute name="defaultValueBoolean" type="booleanExp" />
++                        <xsd:attribute name="defaultValueComputed" type="xsd:string" />
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="file" type="xsd:string" />
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="primaryKey" type="xsd:string" use="required" />
++            <xsd:attribute name="onlyUpdate" type="xsd:boolean" default="false" />
++            <xsd:attribute name="separator" type="xsd:string" default=","/>
++            <xsd:attribute name="quotchar" type="xsd:string" default="&quot;"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:simpleType name="fkCascadeActionOptions">
++        <xsd:restriction base="xsd:token">
++            <xsd:enumeration value="CASCADE"></xsd:enumeration>
++            <xsd:enumeration value="SET NULL"></xsd:enumeration>
++            <xsd:enumeration value="SET DEFAULT"></xsd:enumeration>
++            <xsd:enumeration value="RESTRICT"></xsd:enumeration>
++            <xsd:enumeration value="NO ACTION"></xsd:enumeration>
++        </xsd:restriction>
++    </xsd:simpleType>
++
++    <xsd:attributeGroup name="addForeignKeyConstraintAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string" />
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string" />
++        <xsd:attribute name="baseTableName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="baseColumnNames" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="constraintName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="referencedTableCatalogName" type="xsd:string" />
++        <xsd:attribute name="referencedTableSchemaName" type="xsd:string" />
++        <xsd:attribute name="referencedTableName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="referencedColumnNames" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="deferrable" type="booleanExp" />
++        <xsd:attribute name="initiallyDeferred" type="booleanExp" />
++        <xsd:attribute name="deleteCascade" type="booleanExp" />
++        <xsd:attribute name="onDelete" type="fkCascadeActionOptions" />
++        <xsd:attribute name="onUpdate" type="fkCascadeActionOptions" />
++        <xsd:attribute name="referencesUniqueColumn" type="booleanExp" />
++    </xsd:attributeGroup>
++
++    <xsd:attributeGroup name="addNotNullConstraintAttrib">
++        <xsd:attributeGroup ref="tableNameAttribute" />
++        <xsd:attribute name="columnName" type="xsd:string" use="required" />
++        <xsd:attribute name="defaultNullValue" type="xsd:string" />
++        <xsd:attribute name="columnDataType" type="xsd:string" />
++        <xsd:attribute name="constraintName" type="xsd:string"/>
++    </xsd:attributeGroup>
++
++
++    <xsd:element name="addNotNullConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="addNotNullConstraintAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="addForeignKeyConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="addForeignKeyConstraintAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dbmsAttrib">
++        <xsd:attribute name="type" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:element name="dbms">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dbmsAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="changeSetExecuted">
++        <xsd:complexType>
++            <xsd:attribute name="id" type="xsd:string" use="required" />
++            <xsd:attribute name="author" type="xsd:string" use="required" />
++            <xsd:attribute name="changeLogFile" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tableExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="columnExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sequenceExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="sequenceName" type="xsd:string"
++                           use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="foreignKeyConstraintExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="foreignKeyTableName" type="xsd:string" />
++            <xsd:attribute name="foreignKeyName" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="indexExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="indexName" type="xsd:string"/>
++            <xsd:attribute name="tableName" type="xsd:string" />
++            <xsd:attribute name="columnNames" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="rowCount">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" />
++            <xsd:attribute name="expectedRows" type="xsd:int" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tableIsEmpty">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="changeLogPropertyDefined">
++        <xsd:complexType>
++            <xsd:attribute name="property" type="xsd:string" use="required" />
++            <xsd:attribute name="value" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="primaryKeyExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="primaryKeyName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="viewExists">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="viewName" type="xsd:string" use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sqlCheck">
++        <xsd:complexType mixed="true">
++            <xsd:attribute name="expectedResult" type="xsd:string"
++                           use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="customPrecondition">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="name" type="xsd:string" use="required" />
++                        <xsd:attribute name="value" type="xsd:string" use="required" />
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="className" type="xsd:string" use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="and">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1"
++                           maxOccurs="unbounded" />
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="or">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1"
++                           maxOccurs="unbounded" />
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="not">
++        <xsd:complexType>
++            <xsd:choice>
++                <xsd:group ref="PreConditionChildren" minOccurs="1"
++                           maxOccurs="unbounded" />
++            </xsd:choice>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="runningAsAttrib">
++        <xsd:attribute name="username" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:element name="runningAs">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="runningAsAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="objectQuotingStrategyAttrib">
++        <xsd:attribute name="strategy" type="xsd:string" use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:element name="expectedQuotingStrategy">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="objectQuotingStrategyAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dropForeignKeyConstraintAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string" />
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string" />
++        <xsd:attribute name="baseTableName" type="xsd:string"
++                       use="required" />
++        <xsd:attribute name="constraintName" type="xsd:string" />
++    </xsd:attributeGroup>
++
++    <xsd:element name="dropForeignKeyConstraint">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropForeignKeyConstraintAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:attributeGroup name="dropAllForeignKeyConstraintsAttrib">
++        <xsd:attribute name="baseTableCatalogName" type="xsd:string" />
++        <xsd:attribute name="baseTableSchemaName" type="xsd:string" />
++        <xsd:attribute name="baseTableName" type="xsd:string"
++                       use="required" />
++    </xsd:attributeGroup>
++
++    <xsd:element name="dropAllForeignKeyConstraints">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropAllForeignKeyConstraintsAttrib" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropNotNullConstraint">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnDataType" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="setTableRemarks">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" use="required" />
++            <xsd:attribute name="remarks" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="setColumnRemarks">
++        <xsd:complexType>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="tableName" type="xsd:string" use="required" />
++            <xsd:attribute name="columnName" type="xsd:string" use="required" />
++            <xsd:attribute name="remarks" type="xsd:string"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="constraints">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="constraintsAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++
++    <xsd:element name="column">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="constraints" minOccurs="0" />
++            </xsd:sequence>
++            <xsd:attributeGroup ref="column" />
++            <xsd:anyAttribute namespace="##other" processContents="lax" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="param">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="param" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for createTable -->
++    <xsd:element name="createTable">
++        <xsd:complexType>
++            <xsd:choice maxOccurs="unbounded">
++                <xsd:element ref="column" minOccurs="1" maxOccurs="unbounded" />
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
++            </xsd:choice>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="tablespace" type="xsd:string" />
++            <xsd:attribute name="remarks" type="xsd:string" />
++            <xsd:anyAttribute namespace="##other" processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for createView -->
++    <xsd:element name="createView">
++        <xsd:complexType>
++            <xsd:simpleContent>
++                <xsd:extension base="xsd:string">
++                    <xsd:attribute name="catalogName" type="xsd:string" />
++                    <xsd:attribute name="schemaName" type="xsd:string" />
++                    <xsd:attribute name="viewName" type="xsd:string" use="required" />
++                    <xsd:attribute name="replaceIfExists" type="booleanExp" />
++                    <xsd:attribute name="fullDefinition" type="booleanExp" />
++                </xsd:extension>
++            </xsd:simpleContent>
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for insert -->
++    <xsd:element name="insert">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element ref="column" maxOccurs="unbounded" />
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="dbms" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="update">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="column" minOccurs="1" maxOccurs="unbounded" />
++                <xsd:element name="where" minOccurs="0" maxOccurs="1"/>
++                <xsd:element ref="whereParams" minOccurs="0" maxOccurs="1" />
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="whereParams">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="param" minOccurs="1" maxOccurs="unbounded" />
++            </xsd:sequence>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="delete">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element name="where" minOccurs="0" maxOccurs="1" />
++                <xsd:element ref="whereParams" minOccurs="0" maxOccurs="1" />
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- Children for addColum -->
++    <xsd:element name="addColumn">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="1" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:complexContent mixed="true">
++                            <xsd:extension base="columnType">
++                                <xsd:attribute name="beforeColumn" type="xsd:string" />
++                                <xsd:attribute name="afterColumn" type="xsd:string" />
++                                <xsd:attribute name="position" type="xsd:integer" />
++                            </xsd:extension>
++                        </xsd:complexContent>
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="rollback">
++        <xsd:complexType mixed="true">
++            <xsd:choice>
++                <xsd:group ref="changeSetChildren" minOccurs="0"
++                           maxOccurs="unbounded" />
++            </xsd:choice>
++            <xsd:attribute name="changeSetPath" type="xsd:string" />
++            <xsd:attribute name="changeSetAuthor" type="xsd:string" />
++            <xsd:attribute name="changeSetId" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- comment  -->
++    <xsd:element name="comment" type="xsd:string" />
++
++    <!-- sql -->
++    <xsd:element name="sql">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="comment" minOccurs="0" maxOccurs="1" />
++            </xsd:sequence>
++            <xsd:attribute name="stripComments" type="booleanExp" />
++            <xsd:attribute name="splitStatements" type="booleanExp" />
++            <xsd:attribute name="endDelimiter" type="xsd:string" />
++            <xsd:attribute name="dbms" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createProcedure">
++        <xsd:complexType mixed="true">
++            <xsd:sequence>
++                <xsd:element ref="comment" minOccurs="0" maxOccurs="1" />
++            </xsd:sequence>
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++            <xsd:attribute name="procedureName" type="xsd:string" />
++            <xsd:attribute name="path" type="xsd:string" />
++            <xsd:attribute name="encoding" type="xsd:string" />
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++            <xsd:attribute name="dbms" type="xsd:string" />
++            <xsd:attribute name="replaceIfExists" type="xsd:boolean" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="executeCommand">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="arg" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType>
++                        <xsd:attribute name="value" type="xsd:string" use="required" />
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="executable" type="xsd:string" use="required" />
++            <xsd:attribute name="os" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="sqlFile">
++        <xsd:complexType>
++            <xsd:attribute name="path" type="xsd:string" use="required" />
++            <xsd:attribute name="stripComments" type="booleanExp" />
++            <xsd:attribute name="splitStatements" type="booleanExp" />
++            <xsd:attribute name="encoding" type="xsd:string" default="UTF-8"/>
++            <xsd:attribute name="endDelimiter" type="xsd:string" />
++            <xsd:attribute name="relativeToChangelogFile" type="booleanExp" />
++            <xsd:attribute name="dbms" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="tagDatabase">
++        <xsd:complexType>
++            <xsd:attribute name="tag" type="xsd:string" use="required" />
++            <xsd:anyAttribute namespace="##other"  processContents="lax"/>
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="stop">
++        <xsd:complexType mixed="true" />
++    </xsd:element>
++
++    <xsd:element name="empty"/>
++
++    <xsd:element name="output">
++        <xsd:complexType mixed="true" >
++            <xsd:attribute name="target" type="xsd:string" />
++        </xsd:complexType>
++
++    </xsd:element>
++
++    <!-- renameTable -->
++    <xsd:element name="renameTable">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameTableAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="renameView">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameViewAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- dropTable -->
++    <xsd:element name="dropTable">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="dropTableAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropView">
++        <xsd:complexType>
++            <xsd:attribute name="viewName" type="xsd:string" use="required" />
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropProcedure">
++        <xsd:complexType>
++            <xsd:attribute name="procedureName" type="xsd:string" use="required" />
++            <xsd:attribute name="catalogName" type="xsd:string" />
++            <xsd:attribute name="schemaName" type="xsd:string" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <!-- renameColumn -->
++    <xsd:element name="renameColumn">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameColumnAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropColumn">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="column" minOccurs="0" maxOccurs="unbounded" type="columnType" />
++            </xsd:sequence>
++            <xsd:attributeGroup ref="dropColumnAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="mergeColumns">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attribute name="column1Name" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="joinString" type="xsd:string" use="required" />
++            <xsd:attribute name="column2Name" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="finalColumnName" type="xsd:string"
++                           use="required" />
++            <xsd:attribute name="finalColumnType" type="xsd:string"
++                           use="required" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="alterSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="sequenceAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="renameSequence">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="renameSequenceAttributes" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="createIndex">
++        <xsd:complexType>
++            <xsd:choice maxOccurs="unbounded">
++                <xsd:element ref="column" maxOccurs="unbounded" />
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
++            </xsd:choice>
++            <xsd:attributeGroup ref="createIndex" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="dropIndex">
++        <xsd:complexType>
++            <xsd:attributeGroup ref="tableNameAttribute" />
++            <xsd:attributeGroup ref="indexName" />
++            <xsd:attribute name="associatedWith" type="xsd:string" use="optional" />
++        </xsd:complexType>
++    </xsd:element>
++
++    <xsd:element name="customChange">
++        <xsd:complexType>
++            <xsd:sequence>
++                <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
++                    <xsd:complexType mixed="true">
++                        <xsd:attribute name="name" type="xsd:string" use="required" />
++                        <xsd:attribute name="value" type="xsd:string" />
++                    </xsd:complexType>
++                </xsd:element>
++            </xsd:sequence>
++            <xsd:attribute name="class" type="xsd:string" use="required" />
++            <xsd:anyAttribute processContents="lax" />
++        </xsd:complexType>
++    </xsd:element>
++
++
++    <!-- Children for changeSet -->
++    <xsd:group name="changeSetChildren">
++        <xsd:choice>
++            <xsd:element ref="comment" maxOccurs="1" />
++            <xsd:element ref="createTable" maxOccurs="unbounded" />
++            <xsd:element ref="dropTable" maxOccurs="unbounded" />
++            <xsd:element ref="createView" maxOccurs="unbounded" />
++            <xsd:element ref="renameView" maxOccurs="unbounded" />
++            <xsd:element ref="dropView" maxOccurs="unbounded" />
++            <xsd:element ref="insert" maxOccurs="unbounded" />
++            <xsd:element ref="addColumn" maxOccurs="unbounded" />
++            <xsd:element ref="sql" maxOccurs="unbounded" />
++            <xsd:element ref="createProcedure" maxOccurs="unbounded" />
++            <xsd:element ref="dropProcedure" maxOccurs="unbounded" />
++            <xsd:element ref="sqlFile" maxOccurs="unbounded" />
++            <xsd:element ref="renameTable" maxOccurs="unbounded" />
++            <xsd:element ref="renameColumn" maxOccurs="unbounded" />
++            <xsd:element ref="dropColumn" maxOccurs="unbounded" />
++            <xsd:element ref="mergeColumns" maxOccurs="unbounded" />
++            <xsd:element ref="modifyDataType" maxOccurs="unbounded" />
++            <xsd:element ref="createSequence" maxOccurs="unbounded" />
++            <xsd:element ref="alterSequence" maxOccurs="unbounded" />
++            <xsd:element ref="dropSequence" maxOccurs="unbounded" />
++            <xsd:element ref="renameSequence" maxOccurs="unbounded" />
++            <xsd:element ref="createIndex" maxOccurs="unbounded" />
++            <xsd:element ref="dropIndex" maxOccurs="unbounded" />
++            <xsd:element ref="addNotNullConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="dropNotNullConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="addForeignKeyConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="dropForeignKeyConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="dropAllForeignKeyConstraints"
++                         maxOccurs="unbounded" />
++            <xsd:element ref="addPrimaryKey" maxOccurs="unbounded" />
++            <xsd:element ref="dropPrimaryKey" maxOccurs="unbounded" />
++            <xsd:element ref="addLookupTable" maxOccurs="unbounded" />
++            <xsd:element ref="addAutoIncrement" maxOccurs="unbounded" />
++            <xsd:element ref="addDefaultValue" maxOccurs="unbounded" />
++            <xsd:element ref="dropDefaultValue" maxOccurs="unbounded" />
++            <xsd:element ref="addUniqueConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="dropUniqueConstraint" maxOccurs="unbounded" />
++            <xsd:element ref="setTableRemarks" maxOccurs="unbounded" />
++            <xsd:element ref="setColumnRemarks" maxOccurs="unbounded" />
++            <xsd:element ref="customChange" maxOccurs="unbounded" />
++            <xsd:element ref="update" maxOccurs="unbounded" />
++            <xsd:element ref="delete" maxOccurs="unbounded" />
++            <xsd:element ref="loadData" maxOccurs="unbounded" />
++            <xsd:element ref="loadUpdateData" maxOccurs="unbounded" />
++            <xsd:element ref="executeCommand" maxOccurs="unbounded" />
++            <xsd:element ref="stop" maxOccurs="unbounded" />
++            <xsd:element ref="output" maxOccurs="unbounded" />
++            <xsd:element ref="empty" maxOccurs="unbounded" />
++            <xsd:element ref="rollback" maxOccurs="1" />
++            <xsd:any namespace="##other" processContents="lax" minOccurs="0"
++                     maxOccurs="unbounded" />
++        </xsd:choice>
++    </xsd:group>
++
++    <!-- Children for Precondition -->
++    <xsd:group name="PreConditionChildren">
++        <xsd:sequence>
++            <xsd:choice>
++                <xsd:element ref="and" maxOccurs="unbounded" />
++                <xsd:element ref="or" maxOccurs="unbounded" />
++                <xsd:element ref="not" maxOccurs="unbounded" />
++                <xsd:element ref="dbms" maxOccurs="unbounded" />
++                <xsd:element ref="runningAs" maxOccurs="unbounded" />
++                <xsd:element ref="changeSetExecuted" maxOccurs="unbounded" />
++                <xsd:element ref="tableExists" maxOccurs="unbounded" />
++                <xsd:element ref="columnExists" maxOccurs="unbounded" />
++                <xsd:element ref="sequenceExists" maxOccurs="unbounded" />
++                <xsd:element ref="foreignKeyConstraintExists" maxOccurs="unbounded" />
++                <xsd:element ref="indexExists" maxOccurs="unbounded" />
++                <xsd:element ref="primaryKeyExists" maxOccurs="unbounded" />
++                <xsd:element ref="viewExists" maxOccurs="unbounded" />
++                <xsd:element ref="tableIsEmpty" maxOccurs="unbounded" />
++                <xsd:element ref="rowCount" maxOccurs="unbounded" />
++                <xsd:element ref="sqlCheck" maxOccurs="unbounded" />
++                <xsd:element ref="changeLogPropertyDefined" maxOccurs="unbounded" />
++                <xsd:element ref="expectedQuotingStrategy" maxOccurs="unbounded" />
++                <xsd:element ref="customPrecondition" maxOccurs="unbounded" />
++                <xsd:any namespace="##other" processContents="lax" minOccurs="0"
++                         maxOccurs="unbounded" />
++            </xsd:choice>
++        </xsd:sequence>
++
++    </xsd:group>
++</xsd:schema>
+diff --git a/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+new file mode 100644
+index 0000000..72c12f3
+--- /dev/null
++++ b/private/cache/retriever/www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++
++<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
++            targetNamespace="http://www.liquibase.org/xml/ns/dbchangelog-ext"
++            xmlns="http://www.liquibase.org/xml/ns/dbchangelog-ext"
++            elementFormDefault="qualified">
++</xsd:schema>
+\ No newline at end of file
+diff --git a/src/main/java/com/crossover/techtrial/controller/PersonController.java b/src/main/java/com/crossover/techtrial/controller/PersonController.java
+index ded9199..1a57d99 100644
+--- a/src/main/java/com/crossover/techtrial/controller/PersonController.java
++++ b/src/main/java/com/crossover/techtrial/controller/PersonController.java
+@@ -22,8 +22,17 @@ import com.crossover.techtrial.service.PersonService;
+ @RestController
+ public class PersonController {
+   
+-  @Autowired
+-  PersonService personService;
++  private final PersonService personService;
++
++    /**
++     * Autowired constructor
++     *
++     * @param personService service {@link PersonService}
++     */
++    @Autowired
++    public PersonController(PersonService personService) {
++        this.personService = personService;
++    }
+   
+   @PostMapping(path = "/api/person")
+   public ResponseEntity<Person> register(@RequestBody Person p) {
+@@ -35,7 +44,7 @@ public class PersonController {
+     return ResponseEntity.ok(personService.getAll());
+   }
+   
+-  @GetMapping(path = "/api/person/{perso-id}")
++  @GetMapping(path = "/api/person/{person-id}")
+   public ResponseEntity<Person> getPersonById(@PathVariable(name="person-id", required=true)Long personId) {
+     Person person = personService.findById(personId);
+     if (person != null) {
+diff --git a/src/main/java/com/crossover/techtrial/controller/RideController.java b/src/main/java/com/crossover/techtrial/controller/RideController.java
+index baea0d8..3ed2b34 100644
+--- a/src/main/java/com/crossover/techtrial/controller/RideController.java
++++ b/src/main/java/com/crossover/techtrial/controller/RideController.java
+@@ -4,7 +4,7 @@
+ package com.crossover.techtrial.controller;
+ 
+ import java.time.LocalDateTime;
+-import java.util.ArrayList;
++
+ import java.util.List;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.format.annotation.DateTimeFormat;
+@@ -19,6 +19,7 @@ import com.crossover.techtrial.dto.TopDriverDTO;
+ import com.crossover.techtrial.model.Ride;
+ import com.crossover.techtrial.service.RideService;
+ 
++
+ /**
+  * RideController for Ride related APIs.
+  * @author crossover
+@@ -27,8 +28,17 @@ import com.crossover.techtrial.service.RideService;
+ @RestController
+ public class RideController {
+   
+-  @Autowired
+-  RideService rideService;
++   private final RideService rideService;
++
++    /**
++     * Autowired constructor
++     *
++     * @param rideService service {@link RideService}
++     */
++    @Autowired
++    public RideController(RideService rideService) {
++        this.rideService = rideService;
++    }
+ 
+   @PostMapping(path ="/api/ride")
+   public ResponseEntity<Ride> createNewRide(@RequestBody Ride ride) {
+@@ -51,19 +61,17 @@ public class RideController {
+    * DONT CHANGE METHOD SIGNATURE AND RETURN TYPES
+    * @return
+    */
+-  @GetMapping(path = "/api/top-rides")
+-  public ResponseEntity<List<TopDriverDTO>> getTopDriver(
++  @GetMapping(path = "/api/top-rides")  
++   public ResponseEntity<List<TopDriverDTO>> getTopDriver(
+       @RequestParam(value="max", defaultValue="5") Long count,
+       @RequestParam(value="startTime", required=true) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
+       @RequestParam(value="endTime", required=true) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime endTime){
+-    List<TopDriverDTO> topDrivers = new ArrayList<TopDriverDTO>();
++    List<TopDriverDTO> topDrivers ;
+     /**
+      * Your Implementation Here. And Fill up topDrivers Arraylist with Top
+      * 
+      */
+-    
+-    return ResponseEntity.ok(topDrivers);
+-    
++    return ResponseEntity.ok(rideService.getTopDrivers(startTime, endTime, count.intValue()));
+   }
+   
+ }
+diff --git a/src/main/java/com/crossover/techtrial/dto/DriveRiderDTO.java b/src/main/java/com/crossover/techtrial/dto/DriveRiderDTO.java
+new file mode 100644
+index 0000000..cdddbe7
+--- /dev/null
++++ b/src/main/java/com/crossover/techtrial/dto/DriveRiderDTO.java
+@@ -0,0 +1,69 @@
++/*
++ * To change this license header, choose License Headers in Project Properties.
++ * To change this template file, choose Tools | Templates
++ * and open the template in the editor.
++ */
++package com.crossover.techtrial.dto;
++
++import java.time.LocalDateTime;
++
++/**
++ *
++ * @author PhILiPp
++ */
++public class DriveRiderDTO {
++    Long id;
++    LocalDateTime startTime;
++    LocalDateTime endTime;
++    Long distance;
++    PersonDTO driver;
++    PersonDTO rider;
++
++    public Long getId() {
++        return id;
++    }
++
++    public void setId(Long id) {
++        this.id = id;
++    }
++
++    public LocalDateTime getStartTime() {
++        return startTime;
++    }
++
++    public void setStartTime(LocalDateTime startTime) {
++        this.startTime = startTime;
++    }
++
++    public LocalDateTime getEndTime() {
++        return endTime;
++    }
++
++    public void setEndTime(LocalDateTime endTime) {
++        this.endTime = endTime;
++    }
++
++    public Long getDistance() {
++        return distance;
++    }
++
++    public void setDistance(Long distance) {
++        this.distance = distance;
++    }
++
++    public PersonDTO getDriver() {
++        return driver;
++    }
++
++    public void setDriver(PersonDTO driver) {
++        this.driver = driver;
++    }
++
++    public PersonDTO getRider() {
++        return rider;
++    }
++
++    public void setRider(PersonDTO rider) {
++        this.rider = rider;
++    }
++}
+diff --git a/src/main/java/com/crossover/techtrial/dto/PersonDTO.java b/src/main/java/com/crossover/techtrial/dto/PersonDTO.java
+new file mode 100644
+index 0000000..835ae36
+--- /dev/null
++++ b/src/main/java/com/crossover/techtrial/dto/PersonDTO.java
+@@ -0,0 +1,49 @@
++/*
++ * To change this license header, choose License Headers in Project Properties.
++ * To change this template file, choose Tools | Templates
++ * and open the template in the editor.
++ */
++package com.crossover.techtrial.dto;
++
++/**
++ *
++ * @author PhILiPp
++ */
++public class PersonDTO {
++    Long id;
++    String name;
++    String email;
++    String registrationNumber;
++
++    public Long getId() {
++        return id;
++    }
++
++    public void setId(Long id) {
++        this.id = id;
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    public void setName(String name) {
++        this.name = name;
++    }
++
++    public String getEmail() {
++        return email;
++    }
++
++    public void setEmail(String email) {
++        this.email = email;
++    }
++
++    public String getRegistrationNumber() {
++        return registrationNumber;
++    }
++
++    public void setRegistrationNumber(String registrationNumber) {
++        this.registrationNumber = registrationNumber;
++    }
++}
+diff --git a/src/main/java/com/crossover/techtrial/model/Person.java b/src/main/java/com/crossover/techtrial/model/Person.java
+index 04d44f3..089b5d9 100644
+--- a/src/main/java/com/crossover/techtrial/model/Person.java
++++ b/src/main/java/com/crossover/techtrial/model/Person.java
+@@ -28,18 +28,18 @@ public class Person implements Serializable{
+  
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+-  Long id;
++  private Long id;
+ 
+   @Column(name = "name")
+-  String name;
++  private String name;
+ 
+   @NotNull
+   @Email
+   @Column(name = "email")
+-  String email;
++  private String email;
+ 
+   @Column(name = "registration_number")
+-  String registrationNumber;
++  private String registrationNumber;
+ 
+   public Long getId() {
+     return id;
+@@ -86,35 +86,19 @@ public class Person implements Serializable{
+ 
+   @Override
+   public boolean equals(Object obj) {
+-    if (this == obj)
+-      return true;
+-    if (obj == null)
+-      return false;
+-    if (getClass() != obj.getClass())
+-      return false;
+-    Person other = (Person) obj;
+-    if (email == null) {
+-      if (other.email != null)
+-        return false;
+-    } else if (!email.equals(other.email))
+-      return false;
+-    if (id == null) {
+-      if (other.id != null)
+-        return false;
+-    } else if (!id.equals(other.id))
+-      return false;
+-    if (name == null) {
+-      if (other.name != null)
+-        return false;
+-    } else if (!name.equals(other.name))
+-      return false;
+-    if (registrationNumber == null) {
+-      if (other.registrationNumber != null)
+-        return false;
+-    } else if (!registrationNumber.equals(other.registrationNumber))
+-      return false;
+-    return true;
+-  }
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null || getClass() != obj.getClass()) {
++            return false;
++        }
++        Person person = (Person) obj;
++        return !((email == null ? person.email != null : !email.equals(person.email)) ||
++            (id == null ? person.id != null : !id.equals(person.id)) ||
++            (name == null ? person.name != null : !name.equals(person.name)) ||
++            (registrationNumber == null ? person.registrationNumber != null :
++            !registrationNumber.equals(person.registrationNumber)));
++    }
+ 
+   @Override
+   public String toString() {
+diff --git a/src/main/java/com/crossover/techtrial/model/Ride.java b/src/main/java/com/crossover/techtrial/model/Ride.java
+index 1740eea..8e8f742 100644
+--- a/src/main/java/com/crossover/techtrial/model/Ride.java
++++ b/src/main/java/com/crossover/techtrial/model/Ride.java
+@@ -3,45 +3,79 @@
+  */
+ package com.crossover.techtrial.model;
+ 
++import com.crossover.techtrial.dto.TopDriverDTO;
+ import java.io.Serializable;
+ import javax.persistence.Column;
++import javax.persistence.ColumnResult;
++import javax.persistence.ConstructorResult;
+ import javax.persistence.Entity;
+ import javax.persistence.GeneratedValue;
+ import javax.persistence.GenerationType;
+ import javax.persistence.Id;
+ import javax.persistence.JoinColumn;
+ import javax.persistence.ManyToOne;
++import javax.persistence.NamedNativeQuery;
++import javax.persistence.SqlResultSetMapping;
+ import javax.persistence.Table;
+ import javax.validation.constraints.NotNull;
+ 
+ @Entity
+ @Table(name = "ride")
++@SqlResultSetMapping(name = "TopDrivers",
++    classes = @ConstructorResult(targetClass = TopDriverDTO.class,
++        columns = {
++            @ColumnResult(name = "name"),
++            @ColumnResult(name = "email"),
++            @ColumnResult(name = "totalRideDurationInSeconds", type = Long.class),
++            @ColumnResult(name = "maxRideDurationInSecods", type = Long.class),
++            @ColumnResult(name = "averageDistance", type = Double.class)
++        }
++    )
++)
++@NamedNativeQuery(
++    name = "Ride.findTopDrivers",
++    query =
++        "SELECT person.name, person.email, MAX(durationSum) AS totalRideDurationInSeconds, " +
++            "maxRideDurationInSecods, averageDistance " +
++        "FROM (" +
++            "SELECT driver_id, SUM(TIMESTAMPDIFF(second, start_time, end_time)) AS durationSum, " +
++                "MAX(TIMESTAMPDIFF(second, start_time, end_time)) AS maxRideDurationInSecods, " +
++                "AVG(distance + 0.0) AS averageDistance " +
++            "FROM ride " +
++            "WHERE (start_time >= ?1 AND end_time < ?2) " +
++            "GROUP BY driver_id" +
++        ") AS subRide " +
++        "INNER JOIN person ON driver_id = person.id " +
++        "GROUP BY driver_id " +
++        "ORDER BY MAX(durationSum) DESC",
++    resultSetMapping = "TopDrivers"
++)
+ public class Ride implements Serializable{
+ 
+   private static final long serialVersionUID = 9097639215351514001L;
+ 
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+-  Long id;
++  private Long id;
+ 
+   @NotNull
+   @Column(name = "start_time")
+-  String startTime;
++  private String startTime;
+   
+   @NotNull
+   @Column(name = "end_time")
+-  String endTime;
++  private String endTime;
+   
+   @Column(name = "distance")
+-  Long distance;
++  private Long distance;
+   
+   @ManyToOne
+   @JoinColumn(name = "driver_id", referencedColumnName = "id")
+-  Person driver;
++  private Person driver;
+   
+   @ManyToOne
+   @JoinColumn(name = "rider_id", referencedColumnName = "id")
+-  Person rider;
++  private Person rider;
+ 
+   public Long getId() {
+     return id;
+@@ -107,46 +141,21 @@ public class Ride implements Serializable{
+   }
+ 
+   @Override
+-  public boolean equals(Object obj) {
+-    if (this == obj)
+-      return true;
+-    if (obj == null)
+-      return false;
+-    if (getClass() != obj.getClass())
+-      return false;
+-    Ride other = (Ride) obj;
+-    if (distance == null) {
+-      if (other.distance != null)
+-        return false;
+-    } else if (!distance.equals(other.distance))
+-      return false;
+-    if (driver == null) {
+-      if (other.driver != null)
+-        return false;
+-    } else if (!driver.equals(other.driver))
+-      return false;
+-    if (endTime == null) {
+-      if (other.endTime != null)
+-        return false;
+-    } else if (!endTime.equals(other.endTime))
+-      return false;
+-    if (id == null) {
+-      if (other.id != null)
+-        return false;
+-    } else if (!id.equals(other.id))
+-      return false;
+-    if (rider == null) {
+-      if (other.rider != null)
+-        return false;
+-    } else if (!rider.equals(other.rider))
+-      return false;
+-    if (startTime == null) {
+-      if (other.startTime != null)
+-        return false;
+-    } else if (!startTime.equals(other.startTime))
+-      return false;
+-    return true;
+-  }
++    public boolean equals(Object obj) {
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null || getClass() != obj.getClass()) {
++            return false;
++        }
++        Ride ride = (Ride) obj;
++        return !((distance == null ? ride.distance != null : !distance.equals(ride.distance)) ||
++            (driver == null ? ride.driver != null : !driver.equals(ride.driver)) ||
++            (endTime == null ? ride.endTime != null : !endTime.equals(ride.endTime)) ||
++            (id == null ? ride.id != null : !id.equals(ride.id)) ||
++            (rider == null ? ride.rider != null : !rider.equals(ride.rider)) ||
++            (startTime == null ? ride.startTime != null : !startTime.equals(ride.startTime)));
++    }
+ 
+   @Override
+   public String toString() {
+diff --git a/src/main/java/com/crossover/techtrial/repositories/RideRepository.java b/src/main/java/com/crossover/techtrial/repositories/RideRepository.java
+index 99ace01..93300b0 100644
+--- a/src/main/java/com/crossover/techtrial/repositories/RideRepository.java
++++ b/src/main/java/com/crossover/techtrial/repositories/RideRepository.java
+@@ -3,7 +3,12 @@
+  */
+ package com.crossover.techtrial.repositories;
+ 
++import com.crossover.techtrial.dto.TopDriverDTO;
+ import com.crossover.techtrial.model.Ride;
++import java.time.LocalDateTime;
++import java.util.List;
++import org.springframework.data.domain.Pageable;
++import org.springframework.data.jpa.repository.Query;
+ import org.springframework.data.repository.CrudRepository;
+ import org.springframework.data.rest.core.annotation.RestResource;
+ 
+@@ -13,5 +18,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
+  */
+ @RestResource(exported = false)
+ public interface RideRepository extends CrudRepository<Ride, Long> {
+-
++@Query(nativeQuery = true)
++    List<TopDriverDTO> findTopDrivers(LocalDateTime startTime, LocalDateTime endTime, Pageable pageable);
+ }
+diff --git a/src/main/java/com/crossover/techtrial/service/PersonServiceImpl.java b/src/main/java/com/crossover/techtrial/service/PersonServiceImpl.java
+index a02f6e5..c0e4802 100644
+--- a/src/main/java/com/crossover/techtrial/service/PersonServiceImpl.java
++++ b/src/main/java/com/crossover/techtrial/service/PersonServiceImpl.java
+@@ -18,8 +18,18 @@ import com.crossover.techtrial.repositories.PersonRepository;
+ @Service
+ public class PersonServiceImpl implements PersonService{
+ 
+-  @Autowired
+-  PersonRepository personRepository;
++   private final PersonRepository personRepository;
++
++    /**
++     * Autowired constructor
++     *
++     * @param personRepository {@link PersonRepository} repository
++     */
++    @Autowired
++    public PersonServiceImpl(PersonRepository personRepository) {
++        this.personRepository = personRepository;
++       
++    }
+   
+   /* (non-Javadoc)
+    * @see com.crossover.techtrial.service.PersonService#getAll()
+diff --git a/src/main/java/com/crossover/techtrial/service/RideService.java b/src/main/java/com/crossover/techtrial/service/RideService.java
+index 4926f6b..703249e 100644
+--- a/src/main/java/com/crossover/techtrial/service/RideService.java
++++ b/src/main/java/com/crossover/techtrial/service/RideService.java
+@@ -3,7 +3,10 @@
+  */
+ package com.crossover.techtrial.service;
+ 
++import com.crossover.techtrial.dto.TopDriverDTO;
+ import com.crossover.techtrial.model.Ride;
++import java.util.List;
++import java.time.LocalDateTime;
+ 
+ /**
+  * RideService for rides.
+@@ -16,5 +19,5 @@ public interface RideService {
+   
+   public Ride findById(Long rideId);
+   
+-
++  List<TopDriverDTO> getTopDrivers(LocalDateTime startTime, LocalDateTime endTime, int count);
+ }
+diff --git a/src/main/java/com/crossover/techtrial/service/RideServiceImpl.java b/src/main/java/com/crossover/techtrial/service/RideServiceImpl.java
+index 4a647cc..c9effd2 100644
+--- a/src/main/java/com/crossover/techtrial/service/RideServiceImpl.java
++++ b/src/main/java/com/crossover/techtrial/service/RideServiceImpl.java
+@@ -3,11 +3,19 @@
+  */
+ package com.crossover.techtrial.service;
+ 
++import com.crossover.techtrial.dto.TopDriverDTO;
++import com.crossover.techtrial.model.Person;
+ import java.util.Optional;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ import com.crossover.techtrial.model.Ride;
+ import com.crossover.techtrial.repositories.RideRepository;
++import java.time.LocalDateTime;
++import java.time.temporal.ChronoUnit;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.stream.StreamSupport;
++import org.springframework.data.domain.PageRequest;
+ 
+ /**
+  * @author crossover
+@@ -16,8 +24,17 @@ import com.crossover.techtrial.repositories.RideRepository;
+ @Service
+ public class RideServiceImpl implements RideService{
+ 
+-  @Autowired
+-  RideRepository rideRepository;
++  private final RideRepository rideRepository;
++   
++    /**
++     * Autowired constructor
++     *
++     * @param rideRepository {@link RideRepository} repository     
++     */
++    @Autowired
++    public RideServiceImpl(RideRepository rideRepository) {
++        this.rideRepository = rideRepository;
++    }
+   
+   public Ride save(Ride ride) {
+     return rideRepository.save(ride);
+@@ -29,5 +46,9 @@ public class RideServiceImpl implements RideService{
+       return optionalRide.get();
+     }else return null;
+   }
++  
++  public List<TopDriverDTO> getTopDrivers(LocalDateTime startTime, LocalDateTime endTime, int count) {
++        return rideRepository.findTopDrivers(startTime, endTime, PageRequest.of(0, count));
++    }
+ 
+ }
+diff --git a/src/main/java/com/crossover/techtrial/util/CrossRideEnum.java b/src/main/java/com/crossover/techtrial/util/CrossRideEnum.java
+new file mode 100644
+index 0000000..c4d97e1
+--- /dev/null
++++ b/src/main/java/com/crossover/techtrial/util/CrossRideEnum.java
+@@ -0,0 +1,37 @@
++package com.crossover.techtrial.util;
++
++public class CrossRideEnum {
++
++	// RIDES
++	public static final String RIDE_100_OK = "{\"id\": \"100\", \"driver\": {\"id\": \"1\"}, \"rider\": {\"id\": \"900\"}," 
++	+ " \"startTime\":\"2018-08-08T13:00:00\",\"endTime\":\"2018-08-08T14:00:00\",\"duration\":\"201L\" }";
++
++	public static final String RIDE_1000_OK = "{\"id\": \"1000\", \"driver\": {\"id\": \"1\"}, \"rider\": {\"id\": \"900\"}," 
++			+ " \"startTime\":\"2018-08-28T13:00:00\",\"endTime\":\"2018-08-28T14:00:00\",\"duration\":\"201L\" }";
++
++	public static final Object RIDE_100_WRONG_ENDTIME = "{\"id\": \"100\", \"driver\": {\"id\": \"1\"}, \"rider\": {\"id\": \"900\"}," 
++			+ " \"startTime\":\"2018-08-18T12:20:00\",\"endTime\":\"2018-08-18T12:00:00\",\"duration\":\"150L\" }";
++
++	public static final Object RIDE_200_WRONG_DRIVER_NOT_EXISTS = "{\"id\": \"200\", \"driver\": {\"id\": \"9999\"}, \"rider\": {\"id\": \"900\"}," 
++			+ " \"startTime\":\"2018-08-19T12:00:00\",\"endTime\":\"2018-08-19T12:40:00\",\"duration\":\"50L\" }";
++
++	public static final Object RIDE_300_WRONG_RIDER_NOT_EXISTS = "{\"id\": \"300\", \"driver\": {\"id\": \"1\"}, \"rider\": {\"id\": \"9999\"}," 
++			+ " \"startTime\":\"2018-08-19T12:00:00\",\"endTime\":\"2018-08-19T12:40:00\",\"duration\":\"50L\" }";
++
++	public static final Object RIDE_400_WRONG_NULL_FIELDS= "{\"id\": \"400\", \"driver\": {\"id\": \"\"}, \"rider\": {\"id\": \"\"}," 
++			+ " \"startTime\":\"\",\"endTime\":\"\",\"duration\":\"\" }";
++
++	// API RESOURCES
++	public static final String API_PERSON = "/api/person";
++	public static final String API_RIDE = "/api/ride";
++
++	// DRIVERS
++	public static final String DRIVER_100 = "{\"id\": \"100\",\"name\": \"driver 100\", \"email\": \"driver10000000000001@gmail.com\"," 
++			    + " \"registrationNumber\": \"41DCT\",\"registrationDate\":\"2018-08-08T12:12:12\" }";
++
++	// RIDERS
++	public static final String RIDER_900 = "{\"id\": \"900\",\"name\": \"rider 900\", \"email\": \"rider900@gmail.com\"," 
++				    + " \"registrationNumber\": \"41RCT\",\"registrationDate\":\"2018-08-08T12:12:12\" }";
++
++
++}
+diff --git a/src/main/resources/db/changelog/db.changelog-1.1.xml b/src/main/resources/db/changelog/db.changelog-1.1.xml
+new file mode 100644
+index 0000000..9b73b75
+--- /dev/null
++++ b/src/main/resources/db/changelog/db.changelog-1.1.xml
+@@ -0,0 +1,207 @@
++<?xml version="1.1" encoding="UTF-8" standalone="no"?>
++<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
++    <changeSet author="guidomaiola" id="04092018_insert_data">
++    	<insert tableName="person">
++			<column name="id" value="1" />
++			<column name="name" value="Philipp" />
++			<column name="email" value="p.pacheco760@gmail.com" />
++			<column name="registration_number" value="1234" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="2" />
++			<column name="name" value="Cindy" />
++			<column name="email" value="cindyfvv@gmail.com" />
++			<column name="registration_number" value="1235" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="3" />
++			<column name="name" value="Toledo" />
++			<column name="email" value="toledo@gmail.com" />
++			<column name="registration_number" value="1236" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="4" />
++			<column name="name" value="Leyna" />
++			<column name="email" value="leyna@gmail.com" />
++			<column name="registration_number" value="1237" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="5" />
++			<column name="name" value="Jheremy" />
++			<column name="email" value="jheremy@gmail.com" />
++			<column name="registration_number" value="1238" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="6" />
++			<column name="name" value="Julio" />
++			<column name="email" value="jcesar@gmail.com" />
++			<column name="registration_number" value="1239" />
++		</insert>
++		<insert tableName="person">
++			<column name="id" value="10" />
++			<column name="name" value="Luz" />
++			<column name="email" value="lucitas48@gmail.com" />
++			<column name="registration_number" value="1240" />
++		</insert>
++    	<insert tableName="ride">
++			<column name="id" value="1" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="2" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="3" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="4" />
++			<column name="driver_id" value="2"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="5" />
++			<column name="driver_id" value="3"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="6" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="7" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="8" />
++			<column name="driver_id" value="2"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="9" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="10" />
++			<column name="driver_id" value="2"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="11" />
++			<column name="driver_id" value="3"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="12" />
++			<column name="driver_id" value="4"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="13" />
++			<column name="driver_id" value="5"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="900"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="14" />
++			<column name="driver_id" value="6"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="700"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="15" />
++			<column name="driver_id" value="1"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="200"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="16" />
++			<column name="driver_id" value="2"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="60"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="17" />
++			<column name="driver_id" value="3"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="20"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="18" />
++			<column name="driver_id" value="6"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="10"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="19" />
++			<column name="driver_id" value="6"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="80"/>
++		</insert>
++		<insert tableName="ride">
++			<column name="id" value="20" />
++			<column name="driver_id" value="6"/>
++            <column name="rider_id" value="10"/>
++            <column name="start_time" value="2018-08-19T12:40:00"/>
++            <column name="end_time" value="2018-08-19T12:50:00"/>
++            <column name="distance" value="50"/>
++		</insert>
++    </changeSet>
++</databaseChangeLog>
+diff --git a/src/main/resources/db/changelog/db.changelog-master.xml b/src/main/resources/db/changelog/db.changelog-master.xml
+index ea61ac5..03d177a 100644
+--- a/src/main/resources/db/changelog/db.changelog-master.xml
++++ b/src/main/resources/db/changelog/db.changelog-master.xml
+@@ -3,4 +3,5 @@
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+   <include file="db/changelog/db.changelog-1.0.xml"/>
++  <include file="db/changelog/db.changelog-1.1.xml"/>
+ </databaseChangeLog>
+\ No newline at end of file
+diff --git a/src/test/java/com/crossover/techtrial/controller/PersonControllerTest.java b/src/test/java/com/crossover/techtrial/controller/PersonControllerTest.java
+index 9ffe808..eff79e3 100644
+--- a/src/test/java/com/crossover/techtrial/controller/PersonControllerTest.java
++++ b/src/test/java/com/crossover/techtrial/controller/PersonControllerTest.java
+@@ -3,6 +3,7 @@
+  */
+ package com.crossover.techtrial.controller;
+ 
++import com.crossover.techtrial.dto.PersonDTO;
+ import org.junit.Assert;
+ import org.junit.Before;
+ import org.junit.Test;
+@@ -21,6 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
+ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+ import com.crossover.techtrial.model.Person;
+ import com.crossover.techtrial.repositories.PersonRepository;
++import com.crossover.techtrial.service.PersonService;
++import java.util.List;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNotEquals;
++import org.mockito.Mockito;
++import org.springframework.boot.test.context.TestConfiguration;
++import org.springframework.context.annotation.Bean;
+ 
+ /**
+  * @author kshah
+@@ -30,20 +38,20 @@ import com.crossover.techtrial.repositories.PersonRepository;
+ @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+ public class PersonControllerTest {
+   
+-  MockMvc mockMvc;
+-  
+-  @Mock
+-  private PersonController personController;
+   
+   @Autowired
+   private TestRestTemplate template;
+   
+   @Autowired
+   PersonRepository personRepository;
++  Long id; 
+   
+-  @Before
+-  public void setup() throws Exception {
+-    mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
++   @Before
++  public void savePerson(){
++     Person person = new Person();
++    person.setEmail("p.pacheco760@gmail.com");
++    personRepository.save(person);
++    id = person.getId();
+   }
+   
+   @Test
+@@ -64,5 +72,26 @@ public class PersonControllerTest {
+     headers.setContentType(MediaType.APPLICATION_JSON);
+     return new HttpEntity<Object>(body, headers);
+   }
++  
++  @Test
++  public void testGetPersonByID()  {
++    ResponseEntity<PersonDTO> response = template.getForEntity("/api/person/"+id, PersonDTO.class);
++    assertEquals("mohamed.motyim@gmail.com",response.getBody().getEmail());
++  }
++
++  @Test
++  public void testGetAll()  {
++    ResponseEntity<List> response = template.getForEntity("/api/person/",List.class);
++    assertNotEquals(0,response.getBody().size());
++  }
++  
++   @TestConfiguration
++  class MockInjectionConfiguration {
++
++    @Bean
++    public PersonService service() {
++      return Mockito.mock(PersonService.class);
++    }
++  }
+ 
+ }
+diff --git a/src/test/java/com/crossover/techtrial/controller/RideControllerTest.java b/src/test/java/com/crossover/techtrial/controller/RideControllerTest.java
+new file mode 100644
+index 0000000..71d3932
+--- /dev/null
++++ b/src/test/java/com/crossover/techtrial/controller/RideControllerTest.java
+@@ -0,0 +1,178 @@
++/**
++ * 
++ */
++package com.crossover.techtrial.controller;
++
++import org.junit.After;
++import org.junit.Assert;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.mockito.Mock;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
++import org.springframework.boot.test.web.client.TestRestTemplate;
++import org.springframework.http.HttpEntity;
++import org.springframework.http.HttpHeaders;
++import org.springframework.http.MediaType;
++import org.springframework.http.ResponseEntity;
++import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
++import org.springframework.test.web.servlet.MockMvc;
++import org.springframework.test.web.servlet.setup.MockMvcBuilders;
++
++import com.crossover.techtrial.model.Person;
++import com.crossover.techtrial.model.Ride;
++import com.crossover.techtrial.repositories.PersonRepository;
++import com.crossover.techtrial.repositories.RideRepository;
++import com.crossover.techtrial.util.CrossRideEnum;
++
++/**
++ * Unit tests for {@link RideController. Test cases for Ride api.}
++ * 
++ * @author PhILiPp
++ *
++ */
++@RunWith(SpringJUnit4ClassRunner.class)
++@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
++public class RideControllerTest {
++
++  private static final int ERROR_REQUEST = 400;
++
++private static final int SUCCESS = 200;
++
++private static final int ERROR_NOT_FOUND = 404;
++
++MockMvc mockMvc;
++  
++  @Mock
++  private RideController rideController;
++  
++  @Autowired
++  private TestRestTemplate template;
++  
++  @Autowired
++  RideRepository rideRepository;
++
++  @Autowired
++  PersonRepository personRepository;
++
++  @Before
++  public void setup() throws Exception {
++    mockMvc = MockMvcBuilders.standaloneSetup(rideController).build();
++    
++    HttpEntity<Object> person = getHttpEntity(CrossRideEnum.DRIVER_100);
++    template.postForEntity(CrossRideEnum.API_PERSON, person, Person.class);
++
++    person = getHttpEntity(CrossRideEnum.RIDER_900);
++    template.postForEntity(CrossRideEnum.API_PERSON, person, Person.class);
++
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_1000_OK);
++	template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++  }
++  
++  @Test
++  public void testRideShouldBeRegistered() throws Exception {
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_100_OK);
++    ResponseEntity<Ride> response = template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++    Assert.assertEquals(SUCCESS,response.getStatusCode().value());
++  }
++
++  /**
++   * Tests rides post api wont persist due the validation on endTime has to be greater than startTime.
++   * @throws Exception
++   */
++  @Test
++  public void testRideWithStartTimeGreaterThanEndTimeShouldFail() throws Exception {
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_100_WRONG_ENDTIME);
++    ResponseEntity<Ride> response = template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++    
++    Assert.assertEquals(ERROR_REQUEST,response.getStatusCode().value());
++  }
++
++  /**
++   * Tests rides post api wont persist due the driver referenced does not exists.
++   * @throws Exception
++   */
++  @Test
++  public void testRideWithInexistentDriverShouldFail() throws Exception {
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_200_WRONG_DRIVER_NOT_EXISTS);
++    ResponseEntity<Ride> response = template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++    
++    Assert.assertEquals(ERROR_REQUEST,response.getStatusCode().value());
++  }
++
++  /**
++   * Tests rides post api wont persist due the rider referenced does not exists.
++   * @throws Exception
++   */
++  @Test
++  public void testRideWithInexistentRiderShouldFail() throws Exception {
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_300_WRONG_RIDER_NOT_EXISTS);
++    ResponseEntity<Ride> response = template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++    
++    Assert.assertEquals(ERROR_REQUEST,response.getStatusCode().value());
++  }
++
++  /**
++   * Tests rides post api wont persist due null fields.
++   * @throws Exception
++   */
++  @Test
++  public void testRideWithNullFieldsShouldFail() throws Exception {
++    HttpEntity<Object> ride = getHttpEntity(CrossRideEnum.RIDE_400_WRONG_NULL_FIELDS);
++    ResponseEntity<Ride> response = template.postForEntity(CrossRideEnum.API_RIDE, ride, Ride.class);
++    
++    Assert.assertEquals(ERROR_REQUEST,response.getStatusCode().value());
++  }
++
++  /**
++   * Tests get ride by id api.
++   * @throws Exception
++   */
++  @Test
++  public void testGetRideById() throws Exception {
++	  
++    ResponseEntity<Ride> response = template.getForEntity(CrossRideEnum.API_RIDE+"/1", Ride.class);
++    
++    Assert.assertEquals(SUCCESS,response.getStatusCode().value());
++    Assert.assertEquals(1L,response.getBody().getDriver().getId().longValue());
++    Assert.assertEquals(10L,response.getBody().getRider().getId().longValue());
++  }
++
++  /**
++   * Tests get ride by id api is empty when ride doesnt exists.
++   * @throws Exception
++   */
++  @Test
++  public void testGetRideByIdReturnsNotFound() throws Exception {
++    ResponseEntity<Ride> response = template.getForEntity(CrossRideEnum.API_RIDE+"/9999", Ride.class);
++    
++    Assert.assertEquals(ERROR_NOT_FOUND,response.getStatusCode().value());
++  }
++
++  private HttpEntity<Object> getHttpEntity(Object body) {
++    HttpHeaders headers = new HttpHeaders();
++    headers.setContentType(MediaType.APPLICATION_JSON);
++    return new HttpEntity<Object>(body, headers);
++  }
++
++  @After
++  public void after() throws Exception {
++	// Delete drivers
++	if (personRepository.findById(100L).isPresent()) {
++		personRepository.deleteById(100L);
++	}
++	if (personRepository.findById(900L).isPresent()) {
++		personRepository.deleteById(900L);
++	}
++	// Delete rides
++	if (rideRepository.findById(100L).isPresent()) {
++		rideRepository.deleteById(100L);
++	}
++	if (rideRepository.findById(1000L).isPresent()) {
++		rideRepository.deleteById(1000L);
++	}
++  }
++
++}
+diff --git a/src/test/java/com/crossover/techtrial/repositories/PersonRepositoryTest.java b/src/test/java/com/crossover/techtrial/repositories/PersonRepositoryTest.java
+new file mode 100644
+index 0000000..2d78ca7
+--- /dev/null
++++ b/src/test/java/com/crossover/techtrial/repositories/PersonRepositoryTest.java
+@@ -0,0 +1,55 @@
++package com.crossover.techtrial.repositories;
++
++import com.crossover.techtrial.model.Person;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
++import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
++import org.springframework.test.context.junit4.SpringRunner;
++
++import java.util.Optional;
++
++import static org.junit.Assert.*;
++
++@RunWith(SpringRunner.class)
++@DataJpaTest
++public class PersonRepositoryTest {
++
++    @Autowired
++    private TestEntityManager entityManager;
++
++    @Autowired
++    PersonRepository personRepository;
++
++    Long personID ;
++
++    @Before
++    public void insertCompany(){
++        Person person = new Person();
++        person.setEmail("Test@test.com");
++        person.setName("mohame motyim");
++        person.setRegistrationNumber("01114786614");
++        person = entityManager.persist(person);
++        personID = person.getId();
++    }
++
++    @Test
++    public void testFindByID() {
++        Optional<Person> personOpt = personRepository.findById(personID);
++        assertTrue(personOpt.isPresent());
++        Person person = personOpt.get();
++        assertEquals(person.getName(),"mohame motyim");
++        assertEquals(person.getRegistrationNumber(),"01114786614");
++        assertEquals(person.getEmail(),"Test@test.com");
++    }
++
++
++    @Test
++    public void testNotFindByID() {
++        Optional<Person> personOpt = personRepository.findById(2L);
++        assertFalse(personOpt.isPresent());
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/test/java/com/crossover/techtrial/service/PersonServiceTest.java b/src/test/java/com/crossover/techtrial/service/PersonServiceTest.java
+new file mode 100644
+index 0000000..e101d3f
+--- /dev/null
++++ b/src/test/java/com/crossover/techtrial/service/PersonServiceTest.java
+@@ -0,0 +1,81 @@
++package com.crossover.techtrial.service;
++
++import com.crossover.techtrial.model.Person;
++import com.crossover.techtrial.repositories.PersonRepository;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.mockito.InjectMocks;
++import org.mockito.Mock;
++import org.mockito.junit.MockitoJUnitRunner;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.boot.test.context.SpringBootTest;
++
++import javax.validation.ConstraintViolationException;
++import java.util.*;
++
++import static org.junit.Assert.*;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.Mockito.when;
++
++
++@RunWith(MockitoJUnitRunner.class)
++@SpringBootTest
++public class PersonServiceTest {
++
++    @Mock
++    PersonRepository personRepository ;
++
++    @Autowired
++    @InjectMocks
++    PersonService personService = new PersonServiceImpl(personRepository);
++
++    //-------------------------------- Test FindByID -------------------------------------
++    @Test
++    public void TestNotExsistReturnNull() {
++        when(personRepository.findById(2l)).thenReturn(Optional.empty());
++        assertNull(personService.findById(2l));
++    }
++
++    @Test
++    public void TestExsistReturnPerson() {
++        when(personRepository.findById(anyLong())).thenReturn(Optional.of(new Person()));
++        Person person = personService.findById(3L);
++        assertNotNull(person);
++    }
++
++    //-------------------------------- Test GetAll -------------------------------------
++    @Test
++    public void testGetAllEmpty(){
++        when(personRepository.findAll()).thenReturn(Collections.emptyList());
++        assertEquals(0,personService.getAll().size());
++    }
++
++    @Test
++    public void testGetAllHasElements(){
++        List list = Arrays.asList(new Person(),new Person(),new Person());
++        when(personRepository.findAll()).thenReturn(list);
++        assertEquals(3,personService.getAll().size());
++    }
++
++    //-------------------------------- Test Save -------------------------------------
++    @Test
++    public void testSavePerson(){
++        Person person = new Person();
++        person.setEmail("Test@test.com");
++        person.setName("Jose");
++        person.setRegistrationNumber("01114786614");
++
++        when(personRepository.save(person)).thenReturn(person);
++        assertEquals(person,personService.save(person));
++    }
++
++    @Test(expected = ConstraintViolationException.class)
++    public void testSavePersonWithoutEmail(){
++        Person person = new Person();
++        person.setName("Cindy");
++        person.setRegistrationNumber("01114786614");
++        when(personRepository.save(person)).thenThrow(new ConstraintViolationException(null));
++        personService.save(person);
++    }
++
++}
+\ No newline at end of file
+-- 
+2.13.2.windows.1
+
