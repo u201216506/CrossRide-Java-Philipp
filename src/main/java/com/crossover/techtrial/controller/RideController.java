@@ -4,7 +4,7 @@
 package com.crossover.techtrial.controller;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +19,7 @@ import com.crossover.techtrial.dto.TopDriverDTO;
 import com.crossover.techtrial.model.Ride;
 import com.crossover.techtrial.service.RideService;
 
+
 /**
  * RideController for Ride related APIs.
  * @author crossover
@@ -27,8 +28,17 @@ import com.crossover.techtrial.service.RideService;
 @RestController
 public class RideController {
   
-  @Autowired
-  RideService rideService;
+   private final RideService rideService;
+
+    /**
+     * Autowired constructor
+     *
+     * @param rideService service {@link RideService}
+     */
+    @Autowired
+    public RideController(RideService rideService) {
+        this.rideService = rideService;
+    }
 
   @PostMapping(path ="/api/ride")
   public ResponseEntity<Ride> createNewRide(@RequestBody Ride ride) {
@@ -51,19 +61,17 @@ public class RideController {
    * DONT CHANGE METHOD SIGNATURE AND RETURN TYPES
    * @return
    */
-  @GetMapping(path = "/api/top-rides")
-  public ResponseEntity<List<TopDriverDTO>> getTopDriver(
+  @GetMapping(path = "/api/top-rides")  
+   public ResponseEntity<List<TopDriverDTO>> getTopDriver(
       @RequestParam(value="max", defaultValue="5") Long count,
       @RequestParam(value="startTime", required=true) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime startTime,
       @RequestParam(value="endTime", required=true) @DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm:ss") LocalDateTime endTime){
-    List<TopDriverDTO> topDrivers = new ArrayList<TopDriverDTO>();
+    List<TopDriverDTO> topDrivers ;
     /**
      * Your Implementation Here. And Fill up topDrivers Arraylist with Top
      * 
      */
-    
-    return ResponseEntity.ok(topDrivers);
-    
+    return ResponseEntity.ok(rideService.getTopDrivers(startTime, endTime, count.intValue()));
   }
   
 }

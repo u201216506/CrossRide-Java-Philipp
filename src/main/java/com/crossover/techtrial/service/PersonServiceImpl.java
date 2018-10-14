@@ -18,8 +18,18 @@ import com.crossover.techtrial.repositories.PersonRepository;
 @Service
 public class PersonServiceImpl implements PersonService{
 
-  @Autowired
-  PersonRepository personRepository;
+   private final PersonRepository personRepository;
+
+    /**
+     * Autowired constructor
+     *
+     * @param personRepository {@link PersonRepository} repository
+     */
+    @Autowired
+    public PersonServiceImpl(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+       
+    }
   
   /* (non-Javadoc)
    * @see com.crossover.techtrial.service.PersonService#getAll()

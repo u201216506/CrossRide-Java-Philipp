@@ -28,18 +28,18 @@ public class Person implements Serializable{
  
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
+  private Long id;
 
   @Column(name = "name")
-  String name;
+  private String name;
 
   @NotNull
   @Email
   @Column(name = "email")
-  String email;
+  private String email;
 
   @Column(name = "registration_number")
-  String registrationNumber;
+  private String registrationNumber;
 
   public Long getId() {
     return id;
@@ -86,35 +86,19 @@ public class Person implements Serializable{
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Person other = (Person) obj;
-    if (email == null) {
-      if (other.email != null)
-        return false;
-    } else if (!email.equals(other.email))
-      return false;
-    if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
-    if (name == null) {
-      if (other.name != null)
-        return false;
-    } else if (!name.equals(other.name))
-      return false;
-    if (registrationNumber == null) {
-      if (other.registrationNumber != null)
-        return false;
-    } else if (!registrationNumber.equals(other.registrationNumber))
-      return false;
-    return true;
-  }
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Person person = (Person) obj;
+        return !((email == null ? person.email != null : !email.equals(person.email)) ||
+            (id == null ? person.id != null : !id.equals(person.id)) ||
+            (name == null ? person.name != null : !name.equals(person.name)) ||
+            (registrationNumber == null ? person.registrationNumber != null :
+            !registrationNumber.equals(person.registrationNumber)));
+    }
 
   @Override
   public String toString() {

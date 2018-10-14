@@ -3,45 +3,79 @@
  */
 package com.crossover.techtrial.model;
 
+import com.crossover.techtrial.dto.TopDriverDTO;
 import java.io.Serializable;
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ride")
+@SqlResultSetMapping(name = "TopDrivers",
+    classes = @ConstructorResult(targetClass = TopDriverDTO.class,
+        columns = {
+            @ColumnResult(name = "name"),
+            @ColumnResult(name = "email"),
+            @ColumnResult(name = "totalRideDurationInSeconds", type = Long.class),
+            @ColumnResult(name = "maxRideDurationInSecods", type = Long.class),
+            @ColumnResult(name = "averageDistance", type = Double.class)
+        }
+    )
+)
+@NamedNativeQuery(
+    name = "Ride.findTopDrivers",
+    query =
+        "SELECT person.name, person.email, MAX(durationSum) AS totalRideDurationInSeconds, " +
+            "maxRideDurationInSecods, averageDistance " +
+        "FROM (" +
+            "SELECT driver_id, SUM(TIMESTAMPDIFF(second, start_time, end_time)) AS durationSum, " +
+                "MAX(TIMESTAMPDIFF(second, start_time, end_time)) AS maxRideDurationInSecods, " +
+                "AVG(distance + 0.0) AS averageDistance " +
+            "FROM ride " +
+            "WHERE (start_time >= ?1 AND end_time < ?2) " +
+            "GROUP BY driver_id" +
+        ") AS subRide " +
+        "INNER JOIN person ON driver_id = person.id " +
+        "GROUP BY driver_id " +
+        "ORDER BY MAX(durationSum) DESC",
+    resultSetMapping = "TopDrivers"
+)
 public class Ride implements Serializable{
 
   private static final long serialVersionUID = 9097639215351514001L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
+  private Long id;
 
   @NotNull
   @Column(name = "start_time")
-  String startTime;
+  private String startTime;
   
   @NotNull
   @Column(name = "end_time")
-  String endTime;
+  private String endTime;
   
   @Column(name = "distance")
-  Long distance;
+  private Long distance;
   
   @ManyToOne
   @JoinColumn(name = "driver_id", referencedColumnName = "id")
-  Person driver;
+  private Person driver;
   
   @ManyToOne
   @JoinColumn(name = "rider_id", referencedColumnName = "id")
-  Person rider;
+  private Person rider;
 
   public Long getId() {
     return id;
@@ -107,46 +141,21 @@ public class Ride implements Serializable{
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Ride other = (Ride) obj;
-    if (distance == null) {
-      if (other.distance != null)
-        return false;
-    } else if (!distance.equals(other.distance))
-      return false;
-    if (driver == null) {
-      if (other.driver != null)
-        return false;
-    } else if (!driver.equals(other.driver))
-      return false;
-    if (endTime == null) {
-      if (other.endTime != null)
-        return false;
-    } else if (!endTime.equals(other.endTime))
-      return false;
-    if (id == null) {
-      if (other.id != null)
-        return false;
-    } else if (!id.equals(other.id))
-      return false;
-    if (rider == null) {
-      if (other.rider != null)
-        return false;
-    } else if (!rider.equals(other.rider))
-      return false;
-    if (startTime == null) {
-      if (other.startTime != null)
-        return false;
-    } else if (!startTime.equals(other.startTime))
-      return false;
-    return true;
-  }
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Ride ride = (Ride) obj;
+        return !((distance == null ? ride.distance != null : !distance.equals(ride.distance)) ||
+            (driver == null ? ride.driver != null : !driver.equals(ride.driver)) ||
+            (endTime == null ? ride.endTime != null : !endTime.equals(ride.endTime)) ||
+            (id == null ? ride.id != null : !id.equals(ride.id)) ||
+            (rider == null ? ride.rider != null : !rider.equals(ride.rider)) ||
+            (startTime == null ? ride.startTime != null : !startTime.equals(ride.startTime)));
+    }
 
   @Override
   public String toString() {

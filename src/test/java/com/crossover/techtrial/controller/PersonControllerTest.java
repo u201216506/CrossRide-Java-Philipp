@@ -3,6 +3,7 @@
  */
 package com.crossover.techtrial.controller;
 
+import com.crossover.techtrial.dto.PersonDTO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.crossover.techtrial.model.Person;
 import com.crossover.techtrial.repositories.PersonRepository;
+import com.crossover.techtrial.service.PersonService;
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author kshah
@@ -30,20 +38,20 @@ import com.crossover.techtrial.repositories.PersonRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PersonControllerTest {
   
-  MockMvc mockMvc;
-  
-  @Mock
-  private PersonController personController;
   
   @Autowired
   private TestRestTemplate template;
   
   @Autowired
   PersonRepository personRepository;
+  Long id; 
   
-  @Before
-  public void setup() throws Exception {
-    mockMvc = MockMvcBuilders.standaloneSetup(personController).build();
+   @Before
+  public void savePerson(){
+     Person person = new Person();
+    person.setEmail("p.pacheco760@gmail.com");
+    personRepository.save(person);
+    id = person.getId();
   }
   
   @Test
@@ -63,6 +71,27 @@ public class PersonControllerTest {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     return new HttpEntity<Object>(body, headers);
+  }
+  
+  @Test
+  public void testGetPersonByID()  {
+    ResponseEntity<PersonDTO> response = template.getForEntity("/api/person/"+id, PersonDTO.class);
+    assertEquals("mohamed.motyim@gmail.com",response.getBody().getEmail());
+  }
+
+  @Test
+  public void testGetAll()  {
+    ResponseEntity<List> response = template.getForEntity("/api/person/",List.class);
+    assertNotEquals(0,response.getBody().size());
+  }
+  
+   @TestConfiguration
+  class MockInjectionConfiguration {
+
+    @Bean
+    public PersonService service() {
+      return Mockito.mock(PersonService.class);
+    }
   }
 
 }

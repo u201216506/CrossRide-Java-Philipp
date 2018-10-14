@@ -22,8 +22,17 @@ import com.crossover.techtrial.service.PersonService;
 @RestController
 public class PersonController {
   
-  @Autowired
-  PersonService personService;
+  private final PersonService personService;
+
+    /**
+     * Autowired constructor
+     *
+     * @param personService service {@link PersonService}
+     */
+    @Autowired
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
   
   @PostMapping(path = "/api/person")
   public ResponseEntity<Person> register(@RequestBody Person p) {
@@ -35,7 +44,7 @@ public class PersonController {
     return ResponseEntity.ok(personService.getAll());
   }
   
-  @GetMapping(path = "/api/person/{perso-id}")
+  @GetMapping(path = "/api/person/{person-id}")
   public ResponseEntity<Person> getPersonById(@PathVariable(name="person-id", required=true)Long personId) {
     Person person = personService.findById(personId);
     if (person != null) {

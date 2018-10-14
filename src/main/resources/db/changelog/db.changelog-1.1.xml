@@ -1,0 +1,207 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="guidomaiola" id="04092018_insert_data">
+    	<insert tableName="person">
+			<column name="id" value="1" />
+			<column name="name" value="Philipp" />
+			<column name="email" value="p.pacheco760@gmail.com" />
+			<column name="registration_number" value="1234" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="2" />
+			<column name="name" value="Cindy" />
+			<column name="email" value="cindyfvv@gmail.com" />
+			<column name="registration_number" value="1235" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="3" />
+			<column name="name" value="Toledo" />
+			<column name="email" value="toledo@gmail.com" />
+			<column name="registration_number" value="1236" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="4" />
+			<column name="name" value="Leyna" />
+			<column name="email" value="leyna@gmail.com" />
+			<column name="registration_number" value="1237" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="5" />
+			<column name="name" value="Jheremy" />
+			<column name="email" value="jheremy@gmail.com" />
+			<column name="registration_number" value="1238" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="6" />
+			<column name="name" value="Julio" />
+			<column name="email" value="jcesar@gmail.com" />
+			<column name="registration_number" value="1239" />
+		</insert>
+		<insert tableName="person">
+			<column name="id" value="10" />
+			<column name="name" value="Luz" />
+			<column name="email" value="lucitas48@gmail.com" />
+			<column name="registration_number" value="1240" />
+		</insert>
+    	<insert tableName="ride">
+			<column name="id" value="1" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="2" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="3" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="4" />
+			<column name="driver_id" value="2"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="5" />
+			<column name="driver_id" value="3"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="6" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="7" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="8" />
+			<column name="driver_id" value="2"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="9" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="10" />
+			<column name="driver_id" value="2"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="11" />
+			<column name="driver_id" value="3"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="12" />
+			<column name="driver_id" value="4"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="13" />
+			<column name="driver_id" value="5"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="900"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="14" />
+			<column name="driver_id" value="6"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="700"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="15" />
+			<column name="driver_id" value="1"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="200"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="16" />
+			<column name="driver_id" value="2"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="60"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="17" />
+			<column name="driver_id" value="3"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="20"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="18" />
+			<column name="driver_id" value="6"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="10"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="19" />
+			<column name="driver_id" value="6"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="80"/>
+		</insert>
+		<insert tableName="ride">
+			<column name="id" value="20" />
+			<column name="driver_id" value="6"/>
+            <column name="rider_id" value="10"/>
+            <column name="start_time" value="2018-08-19T12:40:00"/>
+            <column name="end_time" value="2018-08-19T12:50:00"/>
+            <column name="distance" value="50"/>
+		</insert>
+    </changeSet>
+</databaseChangeLog>
